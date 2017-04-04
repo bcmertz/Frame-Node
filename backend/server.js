@@ -6,18 +6,17 @@ var routes = require('./routes');
 
 var app = express();
 
+
+
 // var io=require('socket.io').listen(server);
 
 app.use(express.static('build'));
 
-//middleware configured to use folder 'build' for static? script tags
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(fileUpload());
 app.use('/', routes);
-
-
-
 
 
 app.listen(3000, function () {
