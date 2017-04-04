@@ -12,7 +12,7 @@ var mongoose = require('mongoose')
 var Clarifai = require('clarifai');
 
 aws.config.loadFromPath('./backend/config.json')
-var s3 = new AWS.S3();
+var s3 = new aws.S3();
 var bucketParams = {Bucket: 'code-testing'};
 
 var app = express();
@@ -51,9 +51,10 @@ var postToPython = function (data) {
 }
 
 router.post('/upload', function (req, res) {
-  var tempPath = req.files.file.path;
+  var tempPath = req.body.photo;
   var targetPath = path.resolve(__dirname, './uploadedpics/pic.jpg');
-  console.log('temp:', tempPath, 'target:', targetPath)
+  console.log('temp:', tempPath)
+  console.log('target:', targetPath)
   fs.rename(tempPath, targetPath)
   .then(()=>{
     console.log('image uploaded, saving to aws')
@@ -64,6 +65,9 @@ router.post('/upload', function (req, res) {
   .then((url)=>{
     console.log('uploaded to:', url, ", about to send this url to the classifier to get results")
     postToPython(url)
+    console.log('initiating garbage collection')
+    fs.unlink(targetPath)
+    console.log('garbage collection complete');
     res.send('sent to classifier, processing image')
   })
   .catch((err)=>{
@@ -71,5 +75,11 @@ router.post('/upload', function (req, res) {
     return
   })
 });
+
+router.post('/results', function (req, res) {
+  var data = req.body.source
+  console.log('recieved', data, ', sending relevant results back to the iphone-app')
+})
+
 
 module.exports = router;
