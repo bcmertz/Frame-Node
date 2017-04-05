@@ -9,24 +9,26 @@ var fileUpload = require('express-fileupload');
 var respone = require('response')
 var http = require('http');
 var aws = require('aws-sdk')
-var Clarifai = require('clarifai');
+var models = require('./models/models.js')
+var User = models.User;
+// var Clarifai = require('clarifai');
 
 
 var mongoose = require('mongoose')
 
 
-var s3 = new aws.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-});
+// var s3 = new aws.S3({
+//   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+//   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+// });
 
 
 
-var clari = new Clarifai.App(
-  process.env.idd,
-  process.env.password
-);
-clari.getToken();
+// var clari = new Clarifai.App(
+//   process.env.idd,
+//   process.env.password
+// );
+// clari.getToken();
 
 var postToPython = function (data) {
   console.log('data',data)
@@ -90,5 +92,64 @@ router.get('/', function(req,res){
   res.render('index.html')
 })
 
+
+router.post('/register', function(req, res){
+  User.findOne({
+    email: req.body.email
+  }, function(err, user){
+    if(err){
+      console.log(err);
+    } if(user === null){
+      var data = {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        password: req.body.password
+      }
+      var user = User(data)
+      user.save(function(err){
+        if(err){
+          console.log(err)
+        } else{
+           res.json({
+             success: true
+           })
+        }
+      })
+    } else{
+      res.json({
+        success: false,
+        error: 'An account with this email has already been created'
+      })
+    }
+  })
+
+
+})
+
+router.post('/login', function(req, res){
+  User.findOne({
+    email: req.body.email
+  }, function(err, user){
+    if(err){
+      console.log(err);
+    } else if(user === null){
+      res.json({
+        success: false,
+        error: 'This email is not associated with any account'
+      })
+    } else if(user.password !== req.body.password){
+      res.json({
+        success: false,
+        error: 'Incorrect password'
+      })
+    } else{
+      res.send({
+        success: true,
+        user: user
+      })
+    }
+  })
+})
 
 module.exports = router;
