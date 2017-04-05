@@ -8,8 +8,11 @@ var fileUpload = require('express-fileupload');
 var respone = require('response')
 var http = require('http');
 var aws = require('aws-sdk')
-var mongoose = require('mongoose')
 var Clarifai = require('clarifai');
+
+
+var mongoose = require('mongoose')
+
 
 var s3 = new aws.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
