@@ -1,5 +1,5 @@
 var express = require('express');
-var fs = require('fs') 
+var fs = require('fs')
 var router = express.Router();
 var path = require('path');
 var bodyParser = require('body-parser')
@@ -79,6 +79,10 @@ router.post('/upload', function (req, res) {
 router.post('/results', function (req, res) {
   var data = req.body.source
   console.log('recieved', data, ', sending relevant results back to the iphone-app')
+})
+
+router.get('/', function(req,res){
+  res.sendFile('index.html')
 })
 
 
