@@ -1,4 +1,5 @@
 var express = require('express');
+var app = express();
 var fs = require('fs')
 var router = express.Router();
 var path = require('path');
@@ -12,7 +13,6 @@ var Clarifai = require('clarifai');
 
 
 var mongoose = require('mongoose')
-var app = express();
 
 
 var s3 = new aws.S3({
