@@ -10,7 +10,7 @@ var app = express();
 
 // var io=require('socket.io').listen(server);
 
-app.use(express.static('build'));
+app.use(express.static(__dirname));
 
 
 app.use(bodyParser.json());
@@ -20,6 +20,6 @@ app.use('/', routes);
 
 
 
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!')
+app.listen(process.env.PORT || 3000, function () {
+  console.log('App running on heroku!')
 })

@@ -65,6 +65,7 @@ router.post('/upload', function (req, res) {
     var params = {Bucket: 'code-testing', Key: 'pics.jpg', Body: targetPath};
     var url = s3.getSignedUrl('putObject', params);
     console.log('The URL is', url);
+    return url
   })
   .then((url)=>{
     console.log('uploaded to:', url, ", about to send this url to the classifier to get results")
@@ -86,7 +87,7 @@ router.post('/results', function (req, res) {
 })
 
 router.get('/', function(req,res){
-  res.sendFile(path.join(__dirname, 'index.html'))
+  res.render('index.html')
 })
 
 
