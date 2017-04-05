@@ -166,7 +166,7 @@ class Login extends Component {
       var email = parsedResult.email;
       var password = parsedResult.password;
       if (email && password) {
-        fetch('http://localhost:3000/login', {
+        fetch('https://stark-reef-72596.herokuapp.com/upload', {
           method: 'POST',
           headers: {
             "Content-Type": "application/json"
@@ -216,6 +216,12 @@ class Login extends Component {
           if(err){
             console.log(err);
           } else{
+            this.setState({
+              email: '',
+              password: '',
+              errorMessage: ''
+            })
+
             self.props.navigator.push({
               component: Camera,
               title: "Camera"
@@ -234,6 +240,11 @@ class Login extends Component {
   }
   navigateToRegistration(evt){
     evt.preventDefault();
+    this.setState({
+      email: '',
+      password: '',
+      errorMessage: ''
+    })
     this.props.navigator.push({
       component: Registration,
       title: 'Registration'
@@ -250,20 +261,24 @@ class Login extends Component {
             style={styles.loginTextInput}
             placeholder="Email"
             autoCapitalize="none"
+            autoCorrect={false}
             onChangeText={(text) => this.setState({email: text})}
           />
           <TextInput
             style={styles.loginTextInput}
             secureTextEntry={true}
+            autoCorrect={false}
             placeholder="Password"
             onChangeText={(text) => this.setState({password: text})}
           />
           <TouchableOpacity style={[styles.button, styles.buttonBlack]} onPress = {this.handleLoginRequest}>
             <Text style={styles.buttonLabel}>Tap to Login</Text>
             </TouchableOpacity>
-          <Text>{this.state.errorMessage}</Text>
       </View>
-      <View style={{flex: .25, paddingBottom: 30, justifyContent: 'flex-end'}}>
+      <View style={{flex: .1, justifyContent: 'center', alignItems: 'center'}}>
+        <Text>{this.state.errorMessage}</Text>
+      </View>
+      <View style={{flex: .15, paddingBottom: 30, justifyContent: 'flex-end'}}>
         <TouchableOpacity onPress = {this.navigateToRegistration}>
           <Text style={{textDecorationLine: "underline"}}>Sign Up for Beyond</Text>
         </TouchableOpacity>
@@ -310,6 +325,13 @@ class Registration extends Component{
       .then((response) => response.json())
       .then((responseJson) => {
         if (responseJson.success) {
+          this.setState({
+            firstName: '',
+            lastName: '',
+            email: '',
+            password: '',
+            errorMessage: ''
+          })
           this.props.navigator.pop();
         } else {
           self.setState({
@@ -324,6 +346,13 @@ class Registration extends Component{
   }
   navigateToLogin(evt){
     evt.preventDefault();
+    this.setState({
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      errorMessage: ''
+    })
     this.props.navigator.pop();
   }
   render() {
@@ -336,23 +365,27 @@ class Registration extends Component{
         <TextInput
           style={styles.loginTextInput}
           placeholder="First Name"
+          autoCorrect={false}
           onChangeText={(text) => this.setState({firstName: text})}
         />
         <TextInput
           style={styles.loginTextInput}
           placeholder="Last Name"
+          autoCorrect={false}
           onChangeText={(text) => this.setState({lastName: text})}
         />
           <TextInput
             style={styles.loginTextInput}
             placeholder="Email"
             autoCapitalize="none"
+            autoCorrect={false}
             onChangeText={(text) => this.setState({email: text})}
           />
           <TextInput
             style={styles.loginTextInput}
             secureTextEntry={true}
             placeholder="Password"
+            autoCorrect={false}
             onChangeText={(text) => this.setState({password: text})}
           />
           <TouchableOpacity style={[styles.button, styles.buttonBlack]} onPress = {this.handleRegistrationRequest}>
