@@ -96,7 +96,7 @@ router.post('/register', function(req, res){
   var data = {
     firstName: req.body.firstName,
     lastName: req.body.lastName,
-    email: req.body.lastName,
+    email: req.body.email,
     password: req.body.password
   }
 
@@ -114,6 +114,29 @@ router.post('/register', function(req, res){
 
 })
 
-
+router.post('/login', function(req, res){
+  User.findOne({
+    email: req.body.email
+  }, function(err, user){
+    if(err){
+      console.log(err);
+    } else if(user === null){
+      res.json({
+        success: false,
+        error: 'This email is not associated with any account'
+      })
+    } else if(user.password !== req.body.password){
+      res.json({
+        success: false,
+        error: 'Incorrect password'
+      })
+    } else{
+      res.send({
+        success: true,
+        user: user
+      })
+    }
+  })
+})
 
 module.exports = router;
