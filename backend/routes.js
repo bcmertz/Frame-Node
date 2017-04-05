@@ -93,24 +93,36 @@ router.get('/', function(req,res){
 
 
 router.post('/register', function(req, res){
-  var data = {
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    email: req.body.email,
-    password: req.body.password
-  }
-
-  var user = User(data)
-
-  user.save(function(err){
+  User.findOne({
+    email: req.body.email
+  }, function(err, user){
     if(err){
-      console.log(err)
+      console.log(err);
+    } if(user === null){
+      var data = {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        password: req.body.password
+      }
+      var user = User(data)
+      user.save(function(err){
+        if(err){
+          console.log(err)
+        } else{
+           res.json({
+             success: true
+           })
+        }
+      })
     } else{
-       res.json({
-         success: true
-       })
+      res.json({
+        success: false,
+        error: 'An account with this email has already been created'
+      })
     }
   })
+
 
 })
 
