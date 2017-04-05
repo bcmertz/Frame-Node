@@ -1,3 +1,5 @@
 node_modules/
 env.sh
 npm-debug.log
+config.json
+*.jpg
