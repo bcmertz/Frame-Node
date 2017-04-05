@@ -8,18 +8,22 @@ var fileUpload = require('express-fileupload');
 var respone = require('response')
 var http = require('http');
 var aws = require('aws-sdk')
-var mongoose = require('mongoose')
 var Clarifai = require('clarifai');
 
-aws.config.loadFromPath('./backend/config.json')
-var s3 = new aws.S3();
-var bucketParams = {Bucket: 'code-testing'};
+
+var mongoose = require('mongoose')
+
+
+var s3 = new aws.S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+});
 
 var app = express();
 
 
 var clari = new Clarifai.App(
-  process.env.id,
+  process.env.idd,
   process.env.password
 );
 clari.getToken();
@@ -79,6 +83,10 @@ router.post('/upload', function (req, res) {
 router.post('/results', function (req, res) {
   var data = req.body.source
   console.log('recieved', data, ', sending relevant results back to the iphone-app')
+})
+
+router.get('/', function(req,res){
+  res.sendFile(path.join(__dirname, 'index.html'))
 })
 
 
