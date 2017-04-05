@@ -11,14 +11,18 @@ var aws = require('aws-sdk')
 var mongoose = require('mongoose')
 var Clarifai = require('clarifai');
 
-var s3 = new aws.S3();
+
+var s3 = new aws.S3(
+  process.env.AWS_ACCESS_KEY_ID,
+  process.env.AWS_SECRET_ACCESS_KEY
+);
 var bucketParams = {Bucket: 'code-testing'};
 
 var app = express();
 
 
 var clari = new Clarifai.App(
-  process.env.id,
+  process.env.idd,
   process.env.password
 );
 clari.getToken();
