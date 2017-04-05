@@ -8,25 +8,27 @@ var fileUpload = require('express-fileupload');
 var respone = require('response')
 var http = require('http');
 var aws = require('aws-sdk')
-var Clarifai = require('clarifai');
+var models = require('./models/models.js')
+var User = models.User;
+// var Clarifai = require('clarifai');
 
 
 var mongoose = require('mongoose')
 
 
-var s3 = new aws.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-});
+// var s3 = new aws.S3({
+//   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+//   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+// });
 
 var app = express();
 
 
-var clari = new Clarifai.App(
-  process.env.idd,
-  process.env.password
-);
-clari.getToken();
+// var clari = new Clarifai.App(
+//   process.env.idd,
+//   process.env.password
+// );
+// clari.getToken();
 
 var postToPython = function (data) {
   console.log('data',data)
@@ -89,5 +91,27 @@ router.get('/', function(req,res){
   res.sendFile(path.join(__dirname, 'index.html'))
 })
 
+
+router.post('/register', function(req, res){
+  var data = {
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    email: req.body.lastName,
+    password: req.body.password
+  }
+
+  var user = User(data)
+
+  user.save(function(err){
+    if(err){
+      console.log(err)
+    } else{
+       res.json({
+         success: true
+       })
+    }
+  })
+
+})
 
 module.exports = router;
