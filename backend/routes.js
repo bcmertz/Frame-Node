@@ -12,6 +12,7 @@ var Clarifai = require('clarifai');
 
 
 var mongoose = require('mongoose')
+var app = express();
 
 
 var s3 = new aws.S3({
@@ -19,7 +20,6 @@ var s3 = new aws.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 });
 
-var app = express();
 
 
 var clari = new Clarifai.App(
