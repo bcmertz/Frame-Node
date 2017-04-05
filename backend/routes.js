@@ -59,7 +59,7 @@ var postToPython = function (data) {
 router.post('/upload', function (req, res) {
   var tempPath = req.body.photo;
   var targetPath = path.resolve(__dirname, './uploadedpics/pic.jpg');
-  console.log('tempPath:', tempPath, 'req.body', req.body)
+  console.log('tempPath:', tempPath, 'req.body', req.body, 'req.photo', req.photo)
   console.log('target:', targetPath)
   fs.rename(tempPath, targetPath)
   .then(()=>{
