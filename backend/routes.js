@@ -13,7 +13,7 @@ var aws = require('aws-sdk')
 var models = require('./models/models.js')
 var User = models.User;
 // var Clarifai = require('clarifai');
-
+// var io=require('socket.io')(server)
 
 var mongoose = require('mongoose')
 
@@ -91,6 +91,10 @@ router.post('/upload', function (req, res) {
 router.post('/results', function (req, res) {
   var data = req.body.source
   console.log('recieved', data, ', sending relevant results back to the iphone-app')
+
+  //process data here//
+
+  // socket.emit('respond', data)
 })
 
 router.get('/', function(req,res){
