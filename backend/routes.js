@@ -31,7 +31,7 @@ clari.getToken();
 var postToPython = function (data) {
   console.log('data',data)
   var options = {
-    port: 8080,
+    host: 'http://sample-env.m359bd53gp.us-west-2.elasticbeanstalk.com/',
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
