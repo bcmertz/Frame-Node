@@ -71,7 +71,7 @@ class Camera extends Component {
       body.append('photo', photo);
       body.append('title', 'The Gateway!')
 
-      xhr.open('POST', 'http://localhost:3000/upload')
+      xhr.open('POST', 'https://stark-reef-72596.herokuapp.com/upload')
       xhr.send(body);
 
       this.setState({
@@ -166,7 +166,7 @@ class Login extends Component {
       var email = parsedResult.email;
       var password = parsedResult.password;
       if (email && password) {
-        fetch('https://stark-reef-72596.herokuapp.com/upload', {
+        fetch('https://stark-reef-72596.herokuapp.com/login', {
           method: 'POST',
           headers: {
             "Content-Type": "application/json"
@@ -196,7 +196,7 @@ class Login extends Component {
   handleLoginRequest(evt) {
     var self = this;
     evt.preventDefault();
-    fetch('http://localhost:3000/login', {
+    fetch('https://stark-reef-72596.herokuapp.com/login', {
       method: 'POST',
       headers: {
         "Content-Type": "application/json"
@@ -310,7 +310,7 @@ class Registration extends Component{
         errorMessage: 'One or more fields have not been completed'
       })
     } else{
-      fetch('http://localhost:3000/register', {
+      fetch('https://stark-reef-72596.herokuapp.com/register', {
         method: 'POST',
         headers: {
           "Content-Type": "application/json"
