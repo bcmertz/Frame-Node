@@ -11,7 +11,6 @@ var aws = require('aws-sdk')
 var mongoose = require('mongoose')
 var Clarifai = require('clarifai');
 
-aws.config.loadFromPath('./backend/config.json')
 var s3 = new aws.S3();
 var bucketParams = {Bucket: 'code-testing'};
 
