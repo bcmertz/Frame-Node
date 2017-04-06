@@ -35,11 +35,10 @@ var postToPython = function (data) {
   console.log('data',data)
   var options = {
     host: 'arcane-oasis-75347.herokuapp.com',
-    path: '/',
-    port: 80,
+    path: '/classify',
     method: 'POST',
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Type': 'application/json',
       'Content-Length': Buffer.byteLength(data)
     }
   };
@@ -81,7 +80,8 @@ router.post('/upload', function (req, res) {
       console.log(err)
     } else {
       var url = 'https://s3-us-west-1.amazonaws.com/'+'code-testing/'+'pics1.jpg' //can change out later for more robust filepaths
-      postToPython(url)
+      var data = {'url': url}
+      postToPython(data)
       res.send('sent to classifier, processing image');
     }
     })
