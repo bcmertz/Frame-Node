@@ -26,7 +26,7 @@ var s3 = new aws.S3({
 });
 
 io.on('connection', function(socket){
-  socket.emit('respond', 'something')
+  socket.emit('classification', 'something')
 })
 
 // var clari = new Clarifai.App(
