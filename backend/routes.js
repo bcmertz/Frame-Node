@@ -13,7 +13,7 @@ var aws = require('aws-sdk')
 var models = require('./models/models.js')
 var User = models.User;
 // var Clarifai = require('clarifai');
-var server = require('http').Server(app)
+// var server = require('http').Server(app)
 // var io = require('socket.io').(server);
 
 
