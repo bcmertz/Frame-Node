@@ -34,7 +34,7 @@ var s3 = new aws.S3({
 var postToPython = function (data) {
   console.log('data', data)
   var options = {
-    host: 'https://aqueous-retreat-25940.herokuapp.com/classify',
+    host: 'https://aqueous-retreat-25940.herokuapp.com',
     path: '/classify',
     method: 'POST',
     headers: {
