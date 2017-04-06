@@ -17,8 +17,8 @@ import {
   View
 } from 'react-native';
 
-// import SocketIOClient from 'socket.io-client'
-// var socket =  SocketIOClient('https://stark-reef-72596.herokuapp.com', {jsonp: false});
+import SocketIOClient from 'socket.io-client'
+var socket =  SocketIOClient('https://stark-reef-72596.herokuapp.com', {jsonp: false});
 
 var xhr = new XMLHttpRequest();
 
@@ -37,12 +37,9 @@ var options = {
 class Camera extends Component {
   constructor(){
     super();
-<<<<<<< HEAD
     this.state = {
-      response: null
+      response: 'nada'
     }
-=======
->>>>>>> master
     this.takePhoto = this.takePhoto.bind(this);
     this.chooseImage = this.chooseImage.bind(this);
     this.setImage = this.setImage.bind(this);
@@ -70,7 +67,6 @@ class Camera extends Component {
       console.log('User tapped custom button: ', response.customButton);
     }
     else {
-<<<<<<< HEAD
       var photo = {
         uri: response.uri,
         type:'image/jpeg',
@@ -89,51 +85,14 @@ class Camera extends Component {
       }).then(response => {
         console.log('image uploaded')
       })
-      // .then(() => socket.on('classification', function(data){
-      //   this.setState({
-      //     respose: data
-      //   })
-      // }))
+      .then(() => socket.on('classification', function(data){
+        this.setState({
+          response: data
+        })
+      }))
       .catch(err => {
         console.log(err);
       })
-=======
-    //   var source = {uri: 'data:image/jpeg;base64,' + response, isStatic: true};
-    //   var photo = {
-    //     uri: response.uri,
-    //     type:'image/jpeg',
-    //     name: 'photo.jpg'
-    //   };
-    //   var body = new FormData();
-    //   body.append('authToken', 'secret')
-    //   body.append('photo', photo);
-    //   body.append('title', 'A beautiful photo!');
-    //  fetch('https://stark-reef-72596.herokuapp.com/upload', {
-    //     method: 'POST',
-    //     headers:{
-    //       "Content-Type": "multipart/form-data"
-    //     },
-    //     body: body
-    //   }).then(response => {
-    //     console.log('image uploaded')
-    //   }).catch(err => {
-    //     console.log(err);
-    //   })
-     //
-
-
-    console.log(response.uri,'response.uri');
-    var photo = {
-      uri: response.uri,
-      type:'image/jpeg',
-      name: 'photo.jpg'
-    };
-
-    var body = new FormData();
-    body.append('authToken', 'secret');
-    body.append('photo', photo);
-    body.append('title', 'A beautiful photo!');
->>>>>>> master
 
     // var photo = {
     //   uri: response.uri,
@@ -168,6 +127,7 @@ class Camera extends Component {
       <View style={styles.container}>
         <View style={{flex: .25, justifyContent: 'flex-end'}}>
           <Text style={styles.textBig}>Explore Beyond</Text>
+          <Text>{this.state.response}</Text>
         </View>
         <View style={{flex: .5, justifyContent: 'center', alignItems: 'center'}}>
           <TouchableOpacity style={[styles.button, styles.buttonBlack]} onPress = {this.takePhoto}>
