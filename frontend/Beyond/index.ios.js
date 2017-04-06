@@ -2,6 +2,7 @@ var ImagePicker = require('react-native-image-picker')
 
 var xhr = new XMLHttpRequest();
 
+
 var options = {
   title: 'Take Photo',
   customButtons: [
@@ -33,13 +34,9 @@ import {
 class Camera extends Component {
   constructor(){
     super();
-    this.state = {
-      image: '',
-      response: null
-    }
     this.takePhoto = this.takePhoto.bind(this);
-    this.setImage = this.setImage.bind(this);
     this.chooseImage = this.chooseImage.bind(this);
+    this.setImage = this.setImage.bind(this);
     this.logout = this.logout.bind(this);
   }
   takePhoto(evt){
@@ -64,27 +61,44 @@ class Camera extends Component {
       console.log('User tapped custom button: ', response.customButton);
     }
     else {
-      let source = { uri: response.uri.replace('file://', ''), isStatic: true };
-      var photo = {
-        uri: response.uri,
-        type:'image/jpeg',
-        name: 'photo.jpg'
-      };
-      var body = new FormData();
-      body.append('photo', photo);
-      body.append('title', 'The Gateway!')
+    //   var source = {uri: 'data:image/jpeg;base64,' + response, isStatic: true};
+    //   var photo = {
+    //     uri: response.uri,
+    //     type:'image/jpeg',
+    //     name: 'photo.jpg'
+    //   };
+    //   var body = new FormData();
+    //   body.append('authToken', 'secret')
+    //   body.append('photo', photo);
+    //   body.append('title', 'A beautiful photo!');
+    //  fetch('https://stark-reef-72596.herokuapp.com/upload', {
+    //     method: 'POST',
+    //     headers:{
+    //       "Content-Type": "multipart/form-data"
+    //     },
+    //     body: body
+    //   }).then(response => {
+    //     console.log('image uploaded')
+    //   }).catch(err => {
+    //     console.log(err);
+    //   })
+     //
 
-      xhr.open('POST', 'https://stark-reef-72596.herokuapp.com/upload')
-      xhr.send(body)
-      // .then(() => socket.on('respond', function(data){
-      //   this.setState({
-      //     respose: data
-      //   })
-      // }))
 
-      this.setState({
-        image: '.'+ source.uri
-      });
+    console.log(response.uri,'response.uri');
+    var photo = {
+      uri: response.uri,
+      type:'image/jpeg',
+      name: 'photo.jpg'
+    };
+
+    var body = new FormData();
+    body.append('authToken', 'secret');
+    body.append('photo', photo);
+    body.append('title', 'A beautiful photo!');
+
+    xhr.open('POST', 'https://stark-reef-72596.herokuapp.com/upload');
+    xhr.send(body);
     }
   }
   logout(evt){
@@ -224,7 +238,7 @@ class Login extends Component {
           if(err){
             console.log(err);
           } else{
-            this.setState({
+            self.setState({
               email: '',
               password: '',
               errorMessage: ''
