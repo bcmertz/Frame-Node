@@ -64,39 +64,26 @@ router.post('/upload', function (req, res) {
   console.log('req.files.photo:', req.files.photo);
   targetPath = targetPath + '/pic.jpg'
   console.log('targetPath:', targetPath)
-  // fs.createReadStream('file.json').pipe(request.put('http://mysite.com/obj.json'))  //use later to pipe to python server if wanted, prolly not tho cause aws is easier
-  // fs.rename(tempPath, targetPath)
-  // request(tempPath).pipe(fs.createWriteStream(targetPath))  //probably better than what I currently have
-  // var uploadedPhoto = req.files.photo;
-//  console.log(targetPath);
-  tempPath.mv(targetPath, function(err) {
-    if (err) {
-      console.log('err:', err)
-      res.send(err);
-    }
+  // tempPath.mv(targetPath, function(err) {
+  //   if (err) {
+  //     console.log('err:', err)
+  //     res.send(err);
+  //   }
     console.log('image uploaded, saving to aws')
     // var params = {Bucket: 'code-testing', Key: 'pics.jpg', Body: targetPath};
     var params = {
       Bucket: 'code-testing', Key: 'pics1.jpg', Body: req.files.photo.data, ACL:"public-read-write"
     };
-    // s3.getSignedUrl('putObject', params, function(err, url){
-    //   console.log('The URL is', url);
-    //   console.log('uploaded to:', url, ", about to send this url to the classifier to get results");
-    //   console.log('1', this.httpResponse)
-    //   console.log('2', this.request.httpRequest)
-    //   postToPython(url);
-    //   res.send('sent to classifier, processing image');
-    // })
     s3.putObject(params, function(err, data){
-      if (err) {
-        console.log(err)
-      } else {
-        var url = 'https://s3-us-west-1.amazonaws.com/'+'code-testing/'+'pics1.jpg' //can change out later for more robust filepaths
-        postToPython(url)
-        res.send('sent to classifier, processing image');
-      }
+    if (err) {
+      console.log(err)
+    } else {
+      var url = 'https://s3-us-west-1.amazonaws.com/'+'code-testing/'+'pics1.jpg' //can change out later for more robust filepaths
+      postToPython(url)
+      res.send('sent to classifier, processing image');
+    }
     })
-  })
+  //})
 });
 
 router.post('/results', function (req, res) {
