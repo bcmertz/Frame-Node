@@ -1,48 +1,6 @@
 var ImagePicker = require('react-native-image-picker')
 
-// var xhr = new XMLHttpRequest();
-
-//
-// class FormData {
-//   _parts: Array<FormDataNameValuePair>;
-//
-//   constructor() {
-//     this._parts = [];
-//   }
-//
-//   append(key: string, value: FormDataValue) {
-//     // The XMLHttpRequest spec doesn't specify if duplicate keys are allowed.
-//     // MDN says that any new values should be appended to existing values.
-//     // In any case, major browsers allow duplicate keys, so that's what we'll do
-//     // too. They'll simply get appended as additional form data parts in the
-//     // request body, leaving the server to deal with them.
-//     this._parts.push([key, value]);
-//   }
-//
-//   getParts(): Array<FormDataPart> {
-//     return this._parts.map(([name, value]) => {
-//       var contentDisposition = 'form-data; name="' + name + '"';
-//
-//       var headers: Headers = {'content-disposition': contentDisposition};
-//
-//       // The body part is a "blob", which in React Native just means
-//       // an object with a `uri` attribute. Optionally, it can also
-//       // have a `name` and `type` attribute to specify filename and
-//       // content type (cf. web Blob interface.)
-//       if (typeof value === 'object' && value) {
-//         if (typeof value.name === 'string') {
-//           headers['content-disposition'] += '; filename="' + value.name + '"';
-//         }
-//         if (typeof value.type === 'string') {
-//           headers['content-type'] = value.type;
-//         }
-//         return {...value, headers, fieldName: name};
-//       }
-//       // Convert non-object values to strings as per FormData.append() spec
-//       return {string: String(value), headers, fieldName: name};
-//     });
-//   }
-// }
+var xhr = new XMLHttpRequest();
 
 
 var options = {
@@ -74,12 +32,9 @@ import {
 class Camera extends Component {
   constructor(){
     super();
-    this.state = {
-      image: ''
-    }
     this.takePhoto = this.takePhoto.bind(this);
-    this.setImage = this.setImage.bind(this);
     this.chooseImage = this.chooseImage.bind(this);
+    this.setImage = this.setImage.bind(this);
     this.logout = this.logout.bind(this);
   }
   takePhoto(evt){
@@ -104,21 +59,44 @@ class Camera extends Component {
       console.log('User tapped custom button: ', response.customButton);
     }
     else {
-      var source = {uri: 'data:image/jpeg;base64,' + response, isStatic: true};
-      var photo = {
-        uri: response.uri,
-        type:'multipart/form-data',
-        name: 'photo.jpg'
-      };
-      fetch('https://stark-reef-72596.herokuapp.com/upload', {
-        method: 'POST',
-        body: "data=" + encodeURIComponent(source.uri)
-      }).then(response => {
-        console.log('image uploaded')
-      }).catch(err => {
-        console.log(err);
-      })
+    //   var source = {uri: 'data:image/jpeg;base64,' + response, isStatic: true};
+    //   var photo = {
+    //     uri: response.uri,
+    //     type:'image/jpeg',
+    //     name: 'photo.jpg'
+    //   };
+    //   var body = new FormData();
+    //   body.append('authToken', 'secret')
+    //   body.append('photo', photo);
+    //   body.append('title', 'A beautiful photo!');
+    //  fetch('https://stark-reef-72596.herokuapp.com/upload', {
+    //     method: 'POST',
+    //     headers:{
+    //       "Content-Type": "multipart/form-data"
+    //     },
+    //     body: body
+    //   }).then(response => {
+    //     console.log('image uploaded')
+    //   }).catch(err => {
+    //     console.log(err);
+    //   })
+     //
 
+
+    console.log(response.uri,'response.uri');
+    var photo = {
+      uri: response.uri,
+      type:'image/jpeg',
+      name: 'photo.jpg'
+    };
+
+    var body = new FormData();
+    body.append('authToken', 'secret');
+    body.append('photo', photo);
+    body.append('title', 'A beautiful photo!');
+
+    xhr.open('POST', 'https://stark-reef-72596.herokuapp.com/upload');
+    xhr.send(body);
     }
   }
   logout(evt){
