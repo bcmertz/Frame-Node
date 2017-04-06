@@ -60,6 +60,8 @@ var postToPython = function (data) {
 router.post('/upload', function (req, res) {
   var tempPath = req.body.photo;
   var targetPath = path.resolve(__dirname, './uploadedpics/pic.jpg');
+  var testy = req.body.hasOwnProperty('photo')
+  console.log('Do i have a key photo?', testy)
   console.log('tempPath:', tempPath)
   console.log('req.body:', req.body)
   console.log('req.photo:', req.photo)
