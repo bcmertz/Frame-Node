@@ -28,6 +28,8 @@ import {
   View
 } from 'react-native';
 
+// import SocketIOClient from 'socket.io-client';
+
 
 class Camera extends Component {
   constructor(){
