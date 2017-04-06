@@ -35,7 +35,9 @@ var postToPython = function (data) {
   console.log('data',data)
   var options = {
     host: 'arcane-oasis-75347.herokuapp.com',
-    method: 'do_POST',
+    path: '/',
+    port: 80,
+    method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
       'Content-Length': Buffer.byteLength(data)
