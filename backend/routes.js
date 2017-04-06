@@ -34,7 +34,7 @@ var s3 = new aws.S3({
 var postToPython = function (data) {
   console.log('data',data)
   var options = {
-    host: 'sample-env.m359bd53gp.us-west-2.elasticbeanstalk.com/',
+    host: 'https://arcane-oasis-75347.herokuapp.com/',
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
