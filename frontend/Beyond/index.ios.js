@@ -11,6 +11,7 @@ import {
   TextInput,
   AsyncStorage,
   Image,
+  Alert,
   Keyboard,
   TouchableWithoutFeedback,
   TouchableOpacity,
@@ -89,6 +90,14 @@ class Camera extends Component {
         this.setState({
           response: data
         })
+        Alert.alert(
+          'Import Message',
+          data,
+          [
+            {text: 'Tell me more.'},
+            {text: 'Boring'}
+          ]
+        )
       }))
       .catch(err => {
         console.log(err);
