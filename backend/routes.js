@@ -63,7 +63,12 @@ router.post('/upload', function (req, res) {
   console.log('req.files', req.files.photo);
   // fs.createReadStream('file.json').pipe(request.put('http://mysite.com/obj.json'))  //use later to pipe to python server if wanted, prolly not tho cause aws is easier
   // fs.rename(tempPath, targetPath)
-  request(tempPath).pipe(fs.createWriteStream(targetPath))  //probably better than what I currently have
+  // request(tempPath).pipe(fs.createWriteStream(targetPath))  //probably better than what I currently have
+  var uploadedPhoto = req.files.photo;
+  uploadedPhoto.mv(targetPath, function(err) {
+    if (err)
+      return res.status(500).send(err);
+  })
   .then(()=>{
     console.log('image uploaded, saving to aws')
     var params = {Bucket: 'code-testing', Key: 'pics.jpg', Body: targetPath};
