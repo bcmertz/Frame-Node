@@ -66,8 +66,9 @@ router.post('/upload', function (req, res) {
   // request(tempPath).pipe(fs.createWriteStream(targetPath))  //probably better than what I currently have
   var uploadedPhoto = req.files.photo;
   uploadedPhoto.mv(targetPath, function(err) {
-    if (err)
-      return res.status(500).send(err);
+    if (err) {
+      res.status(500).send(err);
+    }
   })
   .then(()=>{
     console.log('image uploaded, saving to aws')
