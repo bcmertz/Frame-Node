@@ -34,9 +34,9 @@ var s3 = new aws.S3({
 var postToPython = function (data) {
   console.log('data',data)
   var options = {
-    host: 'http://0.0.0.0',
-    port: '34807',
+    host: 'arcane-oasis-75347.herokuapp.com',
     path: '/classify',
+    port: 34807,
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
