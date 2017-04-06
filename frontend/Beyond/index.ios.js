@@ -1,7 +1,26 @@
 var ImagePicker = require('react-native-image-picker')
 
-var xhr = new XMLHttpRequest();
 
+
+import React, { Component } from 'react';
+import {
+  AppRegistry,
+  StyleSheet,
+  Text,
+  NavigatorIOS,
+  TextInput,
+  AsyncStorage,
+  Image,
+  Keyboard,
+  TouchableWithoutFeedback,
+  TouchableOpacity,
+  View
+} from 'react-native';
+
+// import SocketIOClient from 'socket.io-client'
+// var socket =  SocketIOClient('https://stark-reef-72596.herokuapp.com', {jsonp: false});
+
+var xhr = new XMLHttpRequest();
 
 var options = {
   title: 'Take Photo',
@@ -15,23 +34,12 @@ var options = {
 };
 
 
-import React, { Component } from 'react';
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  NavigatorIOS,
-  TextInput,
-  AsyncStorage,
-  Image,
-  TouchableOpacity,
-  View
-} from 'react-native';
-
-
 class Camera extends Component {
   constructor(){
     super();
+    this.state = {
+      response: null
+    }
     this.takePhoto = this.takePhoto.bind(this);
     this.chooseImage = this.chooseImage.bind(this);
     this.setImage = this.setImage.bind(this);
@@ -59,44 +67,46 @@ class Camera extends Component {
       console.log('User tapped custom button: ', response.customButton);
     }
     else {
-    //   var source = {uri: 'data:image/jpeg;base64,' + response, isStatic: true};
-    //   var photo = {
-    //     uri: response.uri,
-    //     type:'image/jpeg',
-    //     name: 'photo.jpg'
-    //   };
-    //   var body = new FormData();
-    //   body.append('authToken', 'secret')
-    //   body.append('photo', photo);
-    //   body.append('title', 'A beautiful photo!');
-    //  fetch('https://stark-reef-72596.herokuapp.com/upload', {
-    //     method: 'POST',
-    //     headers:{
-    //       "Content-Type": "multipart/form-data"
-    //     },
-    //     body: body
-    //   }).then(response => {
-    //     console.log('image uploaded')
-    //   }).catch(err => {
-    //     console.log(err);
-    //   })
-     //
+      var photo = {
+        uri: response.uri,
+        type:'image/jpeg',
+        name: 'photo.jpg'
+      };
+      var body = new FormData();
+      body.append('authToken', 'secret')
+      body.append('photo', photo);
+      body.append('title', 'A beautiful photo!');
+     fetch('https://stark-reef-72596.herokuapp.com/upload', {
+        method: 'POST',
+        headers:{
+          "Content-Type": "multipart/form-data"
+        },
+        body: body
+      }).then(response => {
+        console.log('image uploaded')
+      })
+      // .then(() => socket.on('classification', function(data){
+      //   this.setState({
+      //     respose: data
+      //   })
+      // }))
+      .catch(err => {
+        console.log(err);
+      })
 
-
-    console.log(response.uri,'response.uri');
-    var photo = {
-      uri: response.uri,
-      type:'image/jpeg',
-      name: 'photo.jpg'
-    };
-
-    var body = new FormData();
-    body.append('authToken', 'secret');
-    body.append('photo', photo);
-    body.append('title', 'A beautiful photo!');
-
-    xhr.open('POST', 'https://stark-reef-72596.herokuapp.com/upload');
-    xhr.send(body);
+    // var photo = {
+    //   uri: response.uri,
+    //   type:'image/jpeg',
+    //   name: 'photo.jpg'
+    // };
+    //
+    // var body = new FormData();
+    // body.append('authToken', 'secret');
+    // body.append('photo', photo);
+    // body.append('title', 'A beautiful photo!');
+    //
+    // xhr.open('POST', 'https://stark-reef-72596.herokuapp.com/upload');
+    // xhr.send(body);
     }
   }
   logout(evt){
@@ -151,22 +161,6 @@ class Beyond extends Component {
     )
   }
 }
-
-// class Home extends Component {
-//   render() {
-//     return (
-//       <View style={styles.container}>
-//       <Text style={styles.textBig}>Beyond</Text>
-//       <TouchableOpacity style={[styles.button, styles.buttonBlack]} onPress = {this.Login}>
-//       <Text style={styles.buttonLabel}>Tap to Login</Text>
-//       </TouchableOpacity>
-//       <TouchableOpacity style={[styles.button, styles.buttonBlue]}>
-//       <Text style={styles.buttonLabel}>Tap to Register</Text>
-//       </TouchableOpacity>
-//       </View>
-//     );
-//   }
-// }
 
 class Login extends Component {
   constructor() {
@@ -281,14 +275,27 @@ class Login extends Component {
             style={styles.loginTextInput}
             placeholder="Email"
             autoCapitalize="none"
+            blurOnSubmit={false}
+            autoFocus={false}
             autoCorrect={false}
+            keyboardType="email-address"
+            value={this.state.email}
             onChangeText={(text) => this.setState({email: text})}
+            returnKeyType="next"
+            onSubmitEditing={(event) => {
+              this.refs.loginPasswordInput.focus();
+            }}
           />
           <TextInput
             style={styles.loginTextInput}
             secureTextEntry={true}
+            ref='loginPasswordInput'
+            returnKeyType="done"
+            autoCapitalize="none"
             autoCorrect={false}
+            autoFocus={false}
             placeholder="Password"
+            value={this.state.password}
             onChangeText={(text) => this.setState({password: text})}
           />
           <TouchableOpacity style={[styles.button, styles.buttonBlack]} onPress = {this.handleLoginRequest}>
@@ -386,26 +393,51 @@ class Registration extends Component{
           style={styles.loginTextInput}
           placeholder="First Name"
           autoCorrect={false}
+          blurOnSubmit={false}
+          autoFocus={false}
           onChangeText={(text) => this.setState({firstName: text})}
+          returnKeyType="next"
+          onSubmitEditing={(event) => {
+            this.refs.lastNameRegistrationInput.focus();
+          }}
         />
         <TextInput
           style={styles.loginTextInput}
+          ref='lastNameRegistrationInput'
           placeholder="Last Name"
           autoCorrect={false}
+          blurOnSubmit={false}
+          autoFocus={false}
           onChangeText={(text) => this.setState({lastName: text})}
+          returnKeyType="next"
+          onSubmitEditing={(event) => {
+            this.refs.emailRegistrationInput.focus();
+          }}
         />
           <TextInput
             style={styles.loginTextInput}
+            ref='emailRegistrationInput'
             placeholder="Email"
             autoCapitalize="none"
+            keyboardType="email-address"
             autoCorrect={false}
+            blurOnSubmit={false}
+            autoFocus={false}
             onChangeText={(text) => this.setState({email: text})}
+            returnKeyType="next"
+            onSubmitEditing={(event) => {
+              this.refs.passwordRegistrationInput.focus();
+            }}
           />
           <TextInput
             style={styles.loginTextInput}
             secureTextEntry={true}
+            ref='passwordRegistrationInput'
             placeholder="Password"
+            returnKeyType="done"
+            autoCapitalize="none"
             autoCorrect={false}
+            autoFocus={false}
             onChangeText={(text) => this.setState({password: text})}
           />
           <TouchableOpacity style={[styles.button, styles.buttonBlack]} onPress = {this.handleRegistrationRequest}>

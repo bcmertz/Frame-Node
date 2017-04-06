@@ -1,27 +1,28 @@
 var express = require('express');
+var app = express();
 var fs = require('fs')
 var router = express.Router();
 var path = require('path');
 var bodyParser = require('body-parser')
 var PythonShell = require('python-shell');
 var fileUpload = require('express-fileupload');
-var respone = require('response')
+var response = require('response')
+var request = require('request')
 var http = require('http');
 var aws = require('aws-sdk')
 var models = require('./models/models.js')
 var User = models.User;
 // var Clarifai = require('clarifai');
-
+// var io=require('socket.io')(server)
 
 var mongoose = require('mongoose')
 
 
-// var s3 = new aws.S3({
-//   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-//   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-// });
+var s3 = new aws.S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+});
 
-var app = express();
 
 
 // var clari = new Clarifai.App(
@@ -33,7 +34,7 @@ var app = express();
 var postToPython = function (data) {
   console.log('data',data)
   var options = {
-    port: 8080,
+    host: 'http://sample-env.m359bd53gp.us-west-2.elasticbeanstalk.com/',
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -59,14 +60,19 @@ var postToPython = function (data) {
 router.post('/upload', function (req, res) {
   var tempPath = req.body.photo;
   var targetPath = path.resolve(__dirname, './uploadedpics/pic.jpg');
-  console.log('temp:', tempPath)
+  console.log('tempPath:', tempPath)
+  console.log('req.body:', req.body)
+  console.log('req.photo:', req.photo)
   console.log('target:', targetPath)
-  fs.rename(tempPath, targetPath)
+  // fs.createReadStream('file.json').pipe(request.put('http://mysite.com/obj.json'))  //use later to pipe to python server if wanted, prolly not tho cause aws is easier
+  // fs.rename(tempPath, targetPath)
+  request(tempPath).pipe(fs.createWriteStream(targetPath))  //probably better than what I currently have
   .then(()=>{
     console.log('image uploaded, saving to aws')
     var params = {Bucket: 'code-testing', Key: 'pics.jpg', Body: targetPath};
     var url = s3.getSignedUrl('putObject', params);
     console.log('The URL is', url);
+    return url
   })
   .then((url)=>{
     console.log('uploaded to:', url, ", about to send this url to the classifier to get results")
@@ -85,10 +91,14 @@ router.post('/upload', function (req, res) {
 router.post('/results', function (req, res) {
   var data = req.body.source
   console.log('recieved', data, ', sending relevant results back to the iphone-app')
+
+  //process data here//
+
+  // socket.emit('respond', data)
 })
 
 router.get('/', function(req,res){
-  res.sendFile(path.join(__dirname, 'index.html'))
+  res.render('index.html')
 })
 
 
