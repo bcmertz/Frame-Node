@@ -27,12 +27,15 @@ import {
   View
 } from 'react-native';
 
+// import SocketIOClient from 'socket.io-client';
+
 
 class Camera extends Component {
   constructor(){
     super();
     this.state = {
-      image: ''
+      image: '',
+      response: null
     }
     this.takePhoto = this.takePhoto.bind(this);
     this.setImage = this.setImage.bind(this);
@@ -72,7 +75,12 @@ class Camera extends Component {
       body.append('title', 'The Gateway!')
 
       xhr.open('POST', 'https://stark-reef-72596.herokuapp.com/upload')
-      xhr.send(body);
+      xhr.send(body)
+      // .then(() => socket.on('respond', function(data){
+      //   this.setState({
+      //     respose: data
+      //   })
+      // }))
 
       this.setState({
         image: '.'+ source.uri
