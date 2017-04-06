@@ -59,13 +59,15 @@ var postToPython = function (data) {
 
 router.post('/upload', function (req, res) {
   var tempPath = req.files.photo
-  var targetPath = path.resolve(__dirname, './uploadedpics/pic.jpg');
+  var targetPath = path.resolve(__dirname, './uploadedpics');
   console.log('req.files:', req.files.photo, 'type:', typeof(tempPath));
   console.log('targetPath:', targetPath)
   // fs.createReadStream('file.json').pipe(request.put('http://mysite.com/obj.json'))  //use later to pipe to python server if wanted, prolly not tho cause aws is easier
   // fs.rename(tempPath, targetPath)
   // request(tempPath).pipe(fs.createWriteStream(targetPath))  //probably better than what I currently have
   var uploadedPhoto = req.files.photo;
+  targetPath = targetPath + 'pic.jpg'
+  console.log(targetPath);
   uploadedPhoto.mv(targetPath, function(err) {
     if (err) {
       console.log('err:', err)
