@@ -11,7 +11,8 @@
     "react-native": "0.43.0",
     "react-native-file-transfer": "0.0.3",
     "react-native-image-picker": "^0.26.2",
-    "socket.io": "^1.7.3"
+    "socket.io": "^1.7.3",
+    "socket.io-client": "^1.7.3"
   },
   "devDependencies": {
     "babel-jest": "19.0.0",
