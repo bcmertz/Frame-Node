@@ -36,7 +36,7 @@ var postToPython = function (data) {
   var options = {
     host: 'arcane-oasis-75347.herokuapp.com',
     path: '/classify',
-    port: 34807,
+    // port: 34807,
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
