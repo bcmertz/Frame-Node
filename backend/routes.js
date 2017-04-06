@@ -34,9 +34,10 @@ var s3 = new aws.S3({
 // clari.getToken();
 
 var postToPython = function (data) {
-  console.log('data',data)
+  console.log('data', data)
   var options = {
-    host: 'http://sample-env.m359bd53gp.us-west-2.elasticbeanstalk.com/',
+    host: 'https://aqueous-retreat-25940.herokuapp.com',
+    path: '/classify',
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -59,35 +60,33 @@ var postToPython = function (data) {
   httpreq.end();
 }
 
+
 router.post('/upload', function (req, res) {
-  var tempPath = req.body.photo;
-  var targetPath = path.resolve(__dirname, './uploadedpics/pic.jpg');
-  console.log('tempPath:', tempPath)
-  console.log('req.body:', req.body)
-  console.log('req.photo:', req.photo)
-  console.log('target:', targetPath)
-  // fs.createReadStream('file.json').pipe(request.put('http://mysite.com/obj.json'))  //use later to pipe to python server if wanted, prolly not tho cause aws is easier
-  // fs.rename(tempPath, targetPath)
-  request(tempPath).pipe(fs.createWriteStream(targetPath))  //probably better than what I currently have
-  .then(()=>{
+  var tempPath = req.files.photo;
+  var targetPath = path.join(__dirname, './uploadedpics');
+  console.log('req.files.photo:', req.files.photo);
+  targetPath = targetPath + '/pic.jpg'
+  console.log('targetPath:', targetPath)
+  // tempPath.mv(targetPath, function(err) {
+  //   if (err) {
+  //     console.log('err:', err)
+  //     res.send(err);
+  //   }
     console.log('image uploaded, saving to aws')
-    var params = {Bucket: 'code-testing', Key: 'pics.jpg', Body: targetPath};
-    var url = s3.getSignedUrl('putObject', params);
-    console.log('The URL is', url);
-    return url
-  })
-  .then((url)=>{
-    console.log('uploaded to:', url, ", about to send this url to the classifier to get results")
-    postToPython(url)
-    console.log('initiating garbage collection')
-    fs.unlink(targetPath)
-    console.log('garbage collection complete');
-    res.send('sent to classifier, processing image')
-  })
-  .catch((err)=>{
-    console.log(err)
-    return
-  })
+    // var params = {Bucket: 'code-testing', Key: 'pics.jpg', Body: targetPath};
+    var params = {
+      Bucket: 'code-testing', Key: 'pics1.jpg', Body: req.files.photo.data, ACL:"public-read-write"
+    };
+    s3.putObject(params, function(err, data){
+    if (err) {
+      console.log(err)
+    } else {
+      var url = 'https://s3-us-west-1.amazonaws.com/'+'code-testing/'+'pics1.jpg' //can change out later for more robust filepaths
+      postToPython(url)
+      res.send('sent to classifier, processing image');
+    }
+    })
+  //})
 });
 
 router.post('/results', function (req, res) {
