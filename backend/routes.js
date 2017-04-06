@@ -25,9 +25,9 @@ var s3 = new aws.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 });
 
-io.on('connection', function(socket){
-  socket.emit('classification', 'something')
-})
+// io.on('connection', function(socket){
+//   socket.emit('classification', 'something')
+// })
 
 // var clari = new Clarifai.App(
 //   process.env.idd,
