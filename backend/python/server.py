@@ -33,28 +33,28 @@ class Handler(BaseHTTPRequestHandler):
         # photoFile = 'https://s3-us-west-1.amazonaws.com/mybucket-bennettmertz/pics1.jpg'
         os.system("python classify_image.py " + image_url)
 
-        print ("Image Classification Complete, sending data to node server", arr69)
-        #POST BACK TO NODE SERVER THE LINKS FROM AWS
-        payload = {
-        'source': arr1
-        }
-        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        res = requests.post('http://localhost:3000/results', headers=headers, data=json.dumps(payload))
+        # print ("Image Classification Complete, sending data to node server", arr69)
+        # #POST BACK TO NODE SERVER THE LINKS FROM AWS
+        # payload = {
+        # 'source': arr1
+        # }
+        # headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+        # res = requests.post('http://localhost:3000/results', headers=headers, data=json.dumps(payload))
 
         return
 
 def run(server_class=HTTPServer, handler_class=Handler, port=8080):
-    server_address = ('', port)
+    server_address = ('http://sample-env.m359bd53gp.us-west-2.elasticbeanstalk.com/', 80)
     httpd = server_class(server_address, handler_class)
     print ('python server running')
     httpd.serve_forever()
 def main():
     print ("in main")
     #####move to inside post for actual use of posted images
-    os.system("python classify_image.py " + image_url)
-    return
+    # os.system("python classify_image.py " + image_url)
+    # return
     #####move to inside post for actual use of posted images
-    # run()  uncomment laterrrr as described above
+    run()  #uncomment laterrrr as described above
 
 if __name__ == '__main__':
     # execute video parsing code
