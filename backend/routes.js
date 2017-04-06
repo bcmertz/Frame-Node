@@ -14,7 +14,7 @@ var models = require('./models/models.js')
 var User = models.User;
 // var Clarifai = require('clarifai');
 var server = require('http').Server(app)
-var io = require('socket.io').(server);
+// var io = require('socket.io').(server);
 
 
 var mongoose = require('mongoose')
