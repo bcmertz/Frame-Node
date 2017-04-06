@@ -39,7 +39,7 @@ class Camera extends Component {
   constructor(){
     super();
     this.state = {
-      response: 'nada'
+      response: ''
     }
     this.takePhoto = this.takePhoto.bind(this);
     this.chooseImage = this.chooseImage.bind(this);
