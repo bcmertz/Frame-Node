@@ -82,6 +82,7 @@ var postToPython = function (data) {
 };
 
 router.post('/upload', function (req, res) {
+  resultingClassification=""
   var tempPath = req.files.photo;
   var targetPath = path.join(__dirname, './uploadedpics');
   console.log('req.files.photo:', req.files.photo);
