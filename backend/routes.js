@@ -58,8 +58,6 @@ var postToPython = function (data) {
   }).on('error', function(e){
     console.log(e)
   });
-  httpreq.write(data);
-  httpreq.end();
 }
 
 
