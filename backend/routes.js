@@ -47,7 +47,7 @@ var postToPython = function (data) {
   };
   // var httpreq = http.request(options, function (response) {
   request(options, function (response) {
-    console.log('response hereeee', response);
+    console.log('respddonse hereeee', response);
   }).on('error', function(e){
     console.log(e)
   });
