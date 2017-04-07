@@ -40,7 +40,7 @@ var postToPython = function (data) {
   var options = {
     url: 'https://aqueous-retreat-25940.herokuapp.com/classify',
     multipart: [
-      { body: 'I am an attachment' },
+      { "body": 'I am an attachment' },
     ],
     method: 'POST',
     headers: {
