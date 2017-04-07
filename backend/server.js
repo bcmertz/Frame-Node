@@ -4,10 +4,25 @@ var bodyParser = require('body-parser')
 var fileUpload = require('express-fileupload');
 var routes = require('./routes');
 // var io = require('socket.io')();
+// var WebSocketServer = require("ws").Server
+// var http = require("http")
 
 var app = express();
+var server=require('http').Server(app)
+var io=require('socket.io')(server)
 
-app.use(express.static(__dirname));
+var resultingClassification = ""
+
+io.on('connection', function (socket) {
+  console.log('socket connected');
+  socket.on("update", function() {
+    if (resultingClassification !== "") {
+      socket.emit('classification', resultingClassification)
+    }
+  });
+});
+
+app.use(express.static(__dirname+"/"));
 
 
 app.use(bodyParser.json());
@@ -24,3 +39,15 @@ var server = app.listen(process.env.PORT || 3000, function () {
 
 // var app = require('express')();
 // var server = app.listen(process.env.PORT || 3000);
+
+// var wss = new WebSocketServer({server: server})
+// console.log("websocket server created")
+//
+// wss.on("connection", function(ws) {
+//   var id = setInterval(function() {
+//     ws.send(JSON.stringify(new Date()), function() {  })
+//   }, 1000)
+//
+//   console.log("websocket connection open")
+//
+// })
