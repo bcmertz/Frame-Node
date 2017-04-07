@@ -116,8 +116,8 @@ router.post('/results', function (req, res) {
   // io.on('connection', function(socket){
   //   socket.emit('classification', data[0])
   // });
-  var io = req.app.get('classification')
-  io.emit('hi')
+  var io = req.app.get('socketio')
+  io.emit('classification', data[0])
   console.log(1)
 })
 

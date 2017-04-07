@@ -21,7 +21,7 @@ var server = app.listen(process.env.PORT || 3000, function () {
   console.log('App running on heroku!')
 })
 var io = require('socket.io')(server);
-app.set('classification', io);// next line is the money
+app.set('socketio', io);// next line is the money
 
 // var app = require('express')();
 // var server = app.listen(process.env.PORT || 3000);
