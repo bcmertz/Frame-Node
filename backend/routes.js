@@ -45,7 +45,7 @@ var postToPython = function (data) {
   });
   var options = {
     url: 'https://aqueous-retreat-25940.herokuapp.com',
-    path: '/classify'
+    path: '/classify',
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
