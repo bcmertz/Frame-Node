@@ -8,20 +8,20 @@ var routes = require('./routes');
 // var http = require("http")
 
 var app = express();
-var server=require('http').Server(app)
-var io=require('socket.io')(server)
+// var server=require('http').Server(app)
+// var io=require('socket.io')(server)
 
-var resultingClassification = ""
+// var resultingClassification = ""
 
-io.on('connection', function (socket) {
-  console.log('socket connected');
-  socket.on("update", function() {
-    console.log('HEARD FROM THE FRONT ENDDDDDDDDDDDDDDDDDD', resultingClassification)
-    if (resultingClassification !== "") {
-      socket.emit('classification', resultingClassification)
-    }
-  });
-});
+// io.on('connection', function (socket) {
+//   console.log('socket connected');
+//   socket.on("update", function() {
+//     console.log('HEARD FROM THE FRONT ENDDDDDDDDDDDDDDDDDD', resultingClassification)
+//     if (resultingClassification !== "") {
+//       socket.emit('classification', resultingClassification)
+//     }
+//   });
+// });
 
 app.use(express.static(__dirname+"/"));
 

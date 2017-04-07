@@ -19,7 +19,7 @@ var querystring = require('querystring');
 // var io = require('socket.io')();
 
 var mongoose = require('mongoose')
-
+var resultingClassification = ""
 
 var s3 = new aws.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -120,6 +120,18 @@ router.post('/results', function (req, res) {
   // var io = req.app.get('socketio')
   // io.emit('classification', data[0])
   console.log(1)
+})
+
+router.get('/', function(req,res){
+  res.render('index.html')
+})
+
+router.get('/update', function (req, res) {
+  if (resultingClassification === ""){
+    res.send({"success": false, "data": null})
+  } else {
+    res.send({"success": true, "data": resultingClassification})
+  }
 })
 
 router.get('/', function(req,res){
