@@ -38,15 +38,15 @@ var s3 = new aws.S3({
 var postToPython = function (data) {
   console.log('data', data)
   var options = {
-    host: 'https://aqueous-retreat-25940.herokuapp.com',
-    path: '/classify',
+    url: 'https://aqueous-retreat-25940.herokuapp.com/classify',
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
       'Content-Length': Buffer.byteLength(data)
     }
   };
-  var httpreq = http.request(options, function (response) {
+  // var httpreq = http.request(options, function (response) {
+  request(options, function (response) {
     response.setEncoding('utf8');
     response.on('data', function (chunk) {
       console.log("body: " + chunk);
