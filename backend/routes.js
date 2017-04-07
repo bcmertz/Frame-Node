@@ -47,6 +47,7 @@ var postToPython = function (data) {
     url: 'aqueous-retreat-25940.herokuapp.com',
     path: '/classify',
     method: 'POST',
+    port: 58960,
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
       'Content-Length': Buffer.byteLength(postData)
