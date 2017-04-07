@@ -47,14 +47,7 @@ var postToPython = function (data) {
   };
   // var httpreq = http.request(options, function (response) {
   request(options, function (response) {
-    response.setEncoding('utf8');
-    response.on('data', function (chunk) {
-      console.log("body: " + chunk);
-    }).on('error', function(err) {
-      res.send('error');
-    }).on('end', function() {
-      res.send('ok');
-    })
+    console.log(response);
   }).on('error', function(e){
     console.log(e)
   });
