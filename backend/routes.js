@@ -41,7 +41,7 @@ var postToPython = function (data) {
     url: 'https://aqueous-retreat-25940.herokuapp.com/classify',
     method: 'POST',
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Type': 'application/json',
       'Content-Length': Buffer.byteLength(data)
     }
   };
@@ -74,7 +74,7 @@ router.post('/upload', function (req, res) {
     if (err) {
       console.log(err)
     } else {
-      var url = 'https://s3-us-west-1.amazonaws.com/'+'code-testing/'+'pics1.jpg' //can change out later for more robust filepaths
+      var url = {"url":'https://s3-us-west-1.amazonaws.com/'+'code-testing/'+'pics1.jpg'} //can change out later for more robust filepaths
       postToPython(url)
       res.send('sent to classifier, processing image');
     }
