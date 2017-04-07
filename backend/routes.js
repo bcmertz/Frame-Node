@@ -41,13 +41,13 @@ var postToPython = function (data) {
     url: 'https://aqueous-retreat-25940.herokuapp.com/classify',
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/x-www-form-urlencoded',
       'Content-Length': Buffer.byteLength(data)
     }
   };
   // var httpreq = http.request(options, function (response) {
   request(options, function (response) {
-    console.log(response);
+    console.log('response hereeee', response);
   }).on('error', function(e){
     console.log(e)
   });
