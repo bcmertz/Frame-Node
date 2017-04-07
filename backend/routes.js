@@ -12,9 +12,11 @@ var http = require('http');
 var aws = require('aws-sdk')
 var models = require('./models/models.js')
 var User = models.User;
+var querystring = require('querystring');
+
 // var Clarifai = require('clarifai');
-var server = require('http').Server(app)
-var io = require('socket.io').(server);
+// var server = require('http').Server(app)
+// var io = require('socket.io').(server);
 
 
 var mongoose = require('mongoose')
@@ -25,7 +27,9 @@ var s3 = new aws.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 });
 
-
+// io.on('connection', function(socket){
+//   socket.emit('classification', 'something')
+// })
 
 // var clari = new Clarifai.App(
 //   process.env.idd,
@@ -35,31 +39,51 @@ var s3 = new aws.S3({
 
 var postToPython = function (data) {
   console.log('data', data)
+
+  var postData = querystring.stringify({
+    "data" : data
+  });
   var options = {
-    host: 'https://aqueous-retreat-25940.herokuapp.com',
-    path: '/classify',
-    method: 'POST',
+    url: 'https://aqueous-retreat-25940.herokuapp.com/classify',
+    // method: 'POST',
+    form: postData,
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      'Content-Length': Buffer.byteLength(data)
+      'Content-Length': Buffer.byteLength(postData)
     }
   };
-  var httpreq = http.request(options, function (response) {
-    response.setEncoding('utf8');
-    response.on('data', function (chunk) {
-      console.log("body: " + chunk);
-    }).on('error', function(err) {
-      res.send('error');
-    }).on('end', function() {
-      res.send('ok');
-    })
-  }).on('error', function(e){
-    console.log(e)
-  });
-  httpreq.write(data);
-  httpreq.end();
-}
+  // // var httpreq = http.request(options, function (response) {
+  // var req = http.request(options, function (res) {
+  //   res.setEncoding('utf8');
+  //   var result = '';
+  //   res.on('data', function (chunk) {
+  //     result += chunk;
+  //   });
+  //   res.on('end', function () {
+  //     console.log(result);
+  //   });
+  //   res.on('error', function (err) {
+  //     console.log(err);
+  //   })
+  // });
+  // // req error
+  // req.on('error', function (err) {
+  //   console.log(err);
+  // });
+  // //send request witht the postData form
+  // req.write(postData);
+  // req.end();
+  request.post(options, function(e,r,body){
+    if(e) {
+      console.log(e);
+    } else if (r) {
+      console.log(r);
+    } else {
+      console.log(body);
+    }
+  })
 
+};
 
 router.post('/upload', function (req, res) {
   var tempPath = req.files.photo;
@@ -92,11 +116,6 @@ router.post('/upload', function (req, res) {
 router.post('/results', function (req, res) {
   var data = req.body.source
   console.log('recieved', data, ', sending relevant results back to the iphone-app')
-
-  io.on('connection', function(socket){
-    socket.emit('respond', 'something')
-  })
-
 })
 
 router.get('/', function(req,res){

@@ -28,6 +28,7 @@
     "mongoose": "^4.9.3",
     "path": "^0.12.7",
     "python-shell": "^0.4.0",
+    "querystring": "^0.2.0",
     "react-native-cli": "^2.0.1",
     "react-native-image-picker": "^0.26.2",
     "request": "^2.81.0",

@@ -18,8 +18,8 @@ import {
   View
 } from 'react-native';
 
-import SocketIOClient from 'socket.io-client'
-var socket =  SocketIOClient('https://stark-reef-72596.herokuapp.com', {jsonp: false});
+// import SocketIOClient from 'socket.io-client'
+// var socket =  SocketIOClient('https://stark-reef-72596.herokuapp.com', {jsonp: false});
 
 var xhr = new XMLHttpRequest();
 
@@ -86,19 +86,19 @@ class Camera extends Component {
       }).then(response => {
         console.log('image uploaded')
       })
-      .then(() => socket.on('classification', function(data){
-        this.setState({
-          response: data
-        })
-        Alert.alert(
-          'Import Message',
-          data,
-          [
-            {text: 'Tell me more.'},
-            {text: 'Boring'}
-          ]
-        )
-      }))
+      // .then(() => socket.on('classification', function(data){
+      //   this.setState({
+      //     response: data
+      //   })
+      //   Alert.alert(
+      //     'Import Message',
+      //     data,
+      //     [
+      //       {text: 'Tell me more.'},
+      //       {text: 'Boring'}
+      //     ]
+      //   )
+      // }))
       .catch(err => {
         console.log(err);
       })
