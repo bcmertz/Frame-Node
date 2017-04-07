@@ -1,7 +1,5 @@
 var ImagePicker = require('react-native-image-picker')
 
-
-
 import React, { Component } from 'react';
 import {
   AppRegistry,

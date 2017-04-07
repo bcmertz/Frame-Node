@@ -25,7 +25,9 @@ var s3 = new aws.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 });
 
-
+// io.on('connection', function(socket){
+//   socket.emit('classification', 'something')
+// })
 
 // var clari = new Clarifai.App(
 //   process.env.idd,
@@ -94,9 +96,7 @@ router.post('/results', function (req, res) {
   var data = req.body.source
   console.log('recieved', data, ', sending relevant results back to the iphone-app')
 
-  io.on('connection', function(socket){
-    socket.emit('respond', 'something')
-  })
+
 
 })
 
