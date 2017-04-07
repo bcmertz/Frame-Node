@@ -112,8 +112,8 @@ router.post('/upload', function (req, res) {
 
 router.post('/results', function (req, res) {
   var data = req.body.source
-  socket.emit('classification', data)
-  console.log('recieved', data, ', sending relevant results back to the iphone-app')
+  socket.emit('classification', data[0])
+  console.log('recieved', data[0], ', sending relevant results back to the iphone-app')
 })
 
 router.get('/', function(req,res){
