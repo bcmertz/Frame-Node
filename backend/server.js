@@ -6,6 +6,9 @@ var routes = require('./routes');
 
 var app = express();
 
+io.on('connection', function(socket){
+  socket.on('classification', function(){}); // listen to the event
+});
 
 
 app.use(express.static(__dirname));
@@ -20,8 +23,8 @@ app.use('/', routes);
 var server = app.listen(process.env.PORT || 3000, function () {
   console.log('App running on heroku!')
 })
-var io = require('socket.io')(server);
-app.set('socketio', io);// next line is the money
+// var io = require('socket.io')(server);
+// app.set('socketio', io);// next line is the money
 
 // var app = require('express')();
 // var server = app.listen(process.env.PORT || 3000);
