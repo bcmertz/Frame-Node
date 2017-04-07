@@ -3,3 +3,4 @@ env.sh
 npm-debug.log
 config.json
 *.jpg
+temp.txt

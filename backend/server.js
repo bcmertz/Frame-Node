@@ -3,7 +3,7 @@ var path =require('path'); //path module in node
 var bodyParser = require('body-parser')
 var fileUpload = require('express-fileupload');
 var routes = require('./routes');
-var io = require('socket.io')();
+// var io = require('socket.io')();
 
 var app = express();
 

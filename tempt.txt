@@ -1,0 +1,9 @@
+backend package json:
+,
+"socket.io": "^1.7.3",
+"socket.io-client": "^1.7.3"
+
+frontned package json
+,
+"request": "^2.81.0",
+"response": "^0.18.0"
