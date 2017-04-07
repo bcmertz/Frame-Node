@@ -39,6 +39,9 @@ var postToPython = function (data) {
   console.log('data', data)
   var options = {
     url: 'https://aqueous-retreat-25940.herokuapp.com/classify',
+    multipart: [
+      { body: 'I am an attachment' },
+    ],
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
