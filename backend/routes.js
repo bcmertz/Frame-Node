@@ -44,7 +44,7 @@ var postToPython = function (data) {
     data : data
   });
   var options = {
-    url: 'https://aqueous-retreat-25940.herokuapp.com',
+    url: 'aqueous-retreat-25940.herokuapp.com',
     path: '/classify',
     method: 'POST',
     headers: {
