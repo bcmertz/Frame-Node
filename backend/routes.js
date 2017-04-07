@@ -17,7 +17,7 @@ var querystring = require('querystring');
 // var Clarifai = require('clarifai');
 // var server = require('http').Server(app)
 var io = require('socket.io')();
-io.on('connection', function(client){});
+io.on('connection', function(socket){});
 
 var mongoose = require('mongoose')
 
