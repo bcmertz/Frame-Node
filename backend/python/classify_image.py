@@ -122,7 +122,7 @@ def sendResults():
     'source': arr1
     }
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    res = requests.post('http://localhost:3000/results', headers=headers, data=json.dumps(payload))
+    res = requests.post('https://stark-reef-72596.herokuapp.com/results', headers=headers, data=json.dumps(payload))
 
 def create_graph():
   """Creates a graph from saved GraphDef file and returns a saver."""
