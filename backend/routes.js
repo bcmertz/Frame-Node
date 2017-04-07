@@ -111,6 +111,7 @@ router.post('/upload', function (req, res) {
 
 router.post('/results', function (req, res) {
   var data = req.body.source
+  console.log('resultingClassification', resultingClassification)
   console.log('recieved', data[0], ', sending relevant results back to the iphone-app')
   // res.send('ok')
   // io.on('connection', function(socket){
