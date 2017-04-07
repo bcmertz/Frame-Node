@@ -17,7 +17,7 @@ import {
 } from 'react-native';
 
 import SocketIOClient from 'socket.io-client'
-var socket =  SocketIOClient('https://stark-reef-72596.herokuapp.com', {jsonp: false});
+var socket =  SocketIOClient('https://stark-reef-72596.herokuapp.com/results', {jsonp: false});
 
 var xhr = new XMLHttpRequest();
 
@@ -83,8 +83,10 @@ class Camera extends Component {
         body: body
       }).then(response => {
         console.log('image uploaded')
+        return;
       })
-      .then(() => socket.on('classification', function(data){
+      .then(() => {socket.on('classification', function(data){
+        console.log('inside promise');
         this.setState({
           response: data
         })
@@ -96,7 +98,8 @@ class Camera extends Component {
             {text: 'Boring'}
           ]
         )
-      }))
+      })
+    })
       .catch(err => {
         console.log(err);
       })

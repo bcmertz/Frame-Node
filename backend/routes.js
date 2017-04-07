@@ -16,8 +16,7 @@ var querystring = require('querystring');
 
 // var Clarifai = require('clarifai');
 // var server = require('http').Server(app)
-var io = require('socket.io').(server);
-
+var io = require('socket.io')();
 
 var mongoose = require('mongoose')
 
@@ -26,12 +25,6 @@ var s3 = new aws.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 });
-
-
-io.on('connection', function(socket){
-  console.log('socket on')  //maybe this is all we need
-  // socket.emit('classification', 'something')
-})
 
 
 // var clari = new Clarifai.App(
@@ -118,8 +111,10 @@ router.post('/upload', function (req, res) {
 
 router.post('/results', function (req, res) {
   var data = req.body.source
-  socket.emit('classification', data)
-  console.log('recieved', data, ', sending relevant results back to the iphone-app')
+  io.on('connection', function(socket){
+    socket.emit('classification', data[0])
+  })
+  console.log('recieved', data[0], ', sending relevant results back to the iphone-app')
 
 })
 
