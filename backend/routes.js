@@ -40,8 +40,8 @@ var s3 = new aws.S3({
 var postToPython = function (data) {
   console.log('data', data)
 
-  var post_data = querystring.stringify({
-    'data' : data
+  var postData = querystring.stringify({
+    data : data
   });
   var options = {
     url: 'https://aqueous-retreat-25940.herokuapp.com',
@@ -49,18 +49,29 @@ var postToPython = function (data) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      'Content-Length': Buffer.byteLength(data)
+      'Content-Length': Buffer.byteLength(postData.length)
     }
   };
   // var httpreq = http.request(options, function (response) {
-  var post_req = http.request(options, function(res) {
-      res.setEncoding('utf8');
-      res.on('data', function (chunk) {
-          console.log('Response: ' + chunk);
-      });
-  }).on('error', function(err){console.log(err)})
-  post_req.write(post_data);
-  post_req.end();
+  var req = https.request(options, function (res) {
+    var result = '';
+    res.on('data', function (chunk) {
+      result += chunk;
+    });
+    res.on('end', function () {
+      console.log(result);
+    });
+    res.on('error', function (err) {
+      console.log(err);
+    })
+  });
+  // req error
+  req.on('error', function (err) {
+    console.log(err);
+  });
+  //send request witht the postData form
+  req.write(postData);
+  req.end();
 }
 
 
