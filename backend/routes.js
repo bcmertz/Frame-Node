@@ -45,33 +45,44 @@ var postToPython = function (data) {
   });
   var options = {
     url: 'aqueous-retreat-25940.herokuapp.com/classify',
-    method: 'POST',
+    // method: 'POST',
+    form: postData,
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
       'Content-Length': Buffer.byteLength(postData)
     }
   };
-  // var httpreq = http.request(options, function (response) {
-  var req = http.request(options, function (res) {
-    res.setEncoding('utf8');
-    var result = '';
-    res.on('data', function (chunk) {
-      result += chunk;
-    });
-    res.on('end', function () {
-      console.log(result);
-    });
-    res.on('error', function (err) {
-      console.log(err);
-    })
-  });
-  // req error
-  req.on('error', function (err) {
-    console.log(err);
-  });
-  //send request witht the postData form
-  req.write(postData);
-  req.end();
+  // // var httpreq = http.request(options, function (response) {
+  // var req = http.request(options, function (res) {
+  //   res.setEncoding('utf8');
+  //   var result = '';
+  //   res.on('data', function (chunk) {
+  //     result += chunk;
+  //   });
+  //   res.on('end', function () {
+  //     console.log(result);
+  //   });
+  //   res.on('error', function (err) {
+  //     console.log(err);
+  //   })
+  // });
+  // // req error
+  // req.on('error', function (err) {
+  //   console.log(err);
+  // });
+  // //send request witht the postData form
+  // req.write(postData);
+  // req.end();
+  request.post(options, function(e,r,body){
+    if(e) {
+      console.log(e);
+    } else if (r) {
+      console.log(r);
+    } else {
+      console.log(body);
+    }
+  })
+
 };
 
 router.post('/upload', function (req, res) {
