@@ -12,6 +12,8 @@ var http = require('http');
 var aws = require('aws-sdk')
 var models = require('./models/models.js')
 var User = models.User;
+var querystring = require('querystring');
+
 // var Clarifai = require('clarifai');
 // var server = require('http').Server(app)
 // var io = require('socket.io').(server);
@@ -37,11 +39,13 @@ var s3 = new aws.S3({
 
 var postToPython = function (data) {
   console.log('data', data)
+
+  var post_data = querystring.stringify({
+    'data' : data
+  });
   var options = {
-    url: 'https://aqueous-retreat-25940.herokuapp.com/classify',
-    multipart: [
-      { "body": 'I am an attachment' },
-    ],
+    url: 'https://aqueous-retreat-25940.herokuapp.com',
+    path: '/classify'
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -49,11 +53,14 @@ var postToPython = function (data) {
     }
   };
   // var httpreq = http.request(options, function (response) {
-  request(options, function (response) {
-    console.log('respddonse hereeee', response);
-  }).on('error', function(e){
-    console.log(e)
+  var post_req = http.request(options, function(res) {
+      res.setEncoding('utf8');
+      res.on('data', function (chunk) {
+          console.log('Response: ' + chunk);
+      });
   });
+  post_req.write(post_data);
+  post_req.end();
 }
 
 
