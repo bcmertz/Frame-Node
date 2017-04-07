@@ -58,7 +58,7 @@ var postToPython = function (data) {
       res.on('data', function (chunk) {
           console.log('Response: ' + chunk);
       });
-  });
+  }).on('error', function(err){console.log(err)})
   post_req.write(post_data);
   post_req.end();
 }
