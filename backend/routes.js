@@ -114,7 +114,10 @@ router.post('/results', function (req, res) {
   console.log('recieved', data[0], ', sending relevant results back to the iphone-app')
   // res.send('ok')
   // io.on('connection', function(socket){
+  io.on('connection', function(socket){
+    // socket.on('classification', function(){}); // listen to the event
     socket.emit('classification', data[0])
+  });
   // });
   // var io = req.app.get('socketio')
   // io.emit('classification', data[0])

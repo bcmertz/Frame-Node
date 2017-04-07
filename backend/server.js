@@ -7,11 +7,6 @@ var io = require('socket.io')();
 
 var app = express();
 
-io.on('connection', function(socket){
-  socket.on('classification', function(){}); // listen to the event
-});
-
-
 app.use(express.static(__dirname));
 
 
