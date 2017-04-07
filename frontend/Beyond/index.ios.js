@@ -1,7 +1,5 @@
 var ImagePicker = require('react-native-image-picker')
 
-
-
 import React, { Component } from 'react';
 import {
   AppRegistry,
@@ -18,10 +16,8 @@ import {
   View
 } from 'react-native';
 
-import SocketIOClient from 'socket.io-client'
-var socket =  SocketIOClient('https://stark-reef-72596.herokuapp.com', {jsonp: false});
-
-var xhr = new XMLHttpRequest();
+var ws = new WebSocket('https://stark-reef-72596.herokuapp.com');
+// var xhr = new XMLHttpRequest();
 
 var options = {
   title: 'Take Photo',
@@ -85,11 +81,13 @@ class Camera extends Component {
         body: body
       }).then(response => {
         console.log('image uploaded')
+        return;
       })
-      .then(() => socket.on('classification', function(data){
+      .then(() => {ws.onmessage = (e) => {
+        console.log('inside promise');
         this.setState({
           response: data
-        })
+        });
         Alert.alert(
           'Import Message',
           data,
@@ -97,8 +95,9 @@ class Camera extends Component {
             {text: 'Tell me more.'},
             {text: 'Boring'}
           ]
-        )
-      }))
+        );
+      }
+    });
       .catch(err => {
         console.log(err);
       })
