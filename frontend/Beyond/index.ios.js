@@ -16,8 +16,10 @@ import {
   View
 } from 'react-native';
 
-var ws = new WebSocket('https://stark-reef-72596.herokuapp.com');
-// var xhr = new XMLHttpRequest();
+// import SocketIOClient from 'socket.io-client'
+// var socket =  SocketIOClient('https://stark-reef-72596.herokuapp.com/', {jsonp: false});
+
+var xhr = new XMLHttpRequest();
 
 var options = {
   title: 'Take Photo',
@@ -42,6 +44,18 @@ class Camera extends Component {
     this.setImage = this.setImage.bind(this);
     this.logout = this.logout.bind(this);
   }
+  componentDidUpdate(){
+    if(this.state.response!==''){
+      Alert.alert(
+        'Import Message',
+        this.state.response,
+        [
+          {text: 'Tell me more.'},
+          {text: 'Boring'}
+        ]
+      )
+    }
+  }
   takePhoto(evt){
     evt.preventDefault();
     console.log('inside takePhoto')
@@ -53,6 +67,7 @@ class Camera extends Component {
     ImagePicker.launchImageLibrary({noData: true}, this.setImage);
   }
   setImage(response){
+    var self = this
     console.log('Response = ', response);
     if (response.didCancel) {
       console.log('User cancelled image picker');
@@ -79,25 +94,47 @@ class Camera extends Component {
           "Content-Type": "multipart/form-data"
         },
         body: body
-      }).then(response => {
+      }).then((response) => {
+        console.log(response)
         console.log('image uploaded')
-        return;
+        return 'done';
       })
-      .then(() => {ws.onmessage = (e) => {
-        console.log('inside promise');
-        this.setState({
-          response: data
-        });
-        Alert.alert(
-          'Import Message',
-          data,
-          [
-            {text: 'Tell me more.'},
-            {text: 'Boring'}
-          ]
-        );
-      }
-    });
+      .then((prom) => {
+        console.log(prom);
+        // socket.on('classification', function(data){
+        // clearInterval(update);
+        // console.log('inside promise');
+        // this.setState({
+        //   response: data
+        // })
+        // Alert.alert(
+        //   'Import Message',
+        //   data,
+        //   [
+        //     {text: 'Tell me more.'},
+        //     {text: 'Boring'}
+        //   ]
+        // )
+        // })
+        console.log('ready to set interval')
+        var update = setInterval(function(){
+          console.log('inside setinterval')
+          // socket.emit('update', {hello: 'world'})
+          fetch('https://stark-reef-72596.herokuapp.com/update')
+          .then((response) => response.json())
+          .then((responseJson) => {
+            if (responseJson.success) {
+              clearInterval(update);
+              console.log('GOT RESULT!!!!', responseJson, responseJson.data);
+              var result = responseJson.data
+              self.setState({
+                response: result
+              })
+            } else {
+              console.log("dont have results yet")
+            }})
+          }, 1000)
+      })
       .catch(err => {
         console.log(err);
       })
