@@ -122,6 +122,7 @@ router.post('/results', function (req, res) {
   // });
   // var io = req.app.get('socketio')
   // io.emit('classification', data[0])
+  res.send('got it')
   console.log(1)
 })
 
