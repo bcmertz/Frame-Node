@@ -16,8 +16,11 @@ import {
   View
 } from 'react-native';
 
-var ws = new WebSocket('https://stark-reef-72596.herokuapp.com');
-// var xhr = new XMLHttpRequest();
+import SocketIOClient from 'socket.io-client'
+var socket =  SocketIOClient('https://stark-reef-72596.herokuapp.com/', {jsonp: false});
+
+var xhr = new XMLHttpRequest();
+
 
 var options = {
   title: 'Take Photo',
