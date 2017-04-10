@@ -16,10 +16,11 @@ var querystring = require('querystring');
 
 // var Clarifai = require('clarifai');
 // var server = require('http').Server(app)
-var io = require('socket.io')();
+// var io = require('socket.io')();
+
 
 var mongoose = require('mongoose')
-
+var resultingClassification = ""
 
 var s3 = new aws.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -82,6 +83,7 @@ var postToPython = function (data) {
 };
 
 router.post('/upload', function (req, res) {
+  resultingClassification=""
   var tempPath = req.files.photo;
   var targetPath = path.join(__dirname, './uploadedpics');
   console.log('req.files.photo:', req.files.photo);
@@ -111,10 +113,27 @@ router.post('/upload', function (req, res) {
 
 router.post('/results', function (req, res) {
   var data = req.body.source
-  io.on('connection', function(socket){
-    socket.emit('classification', data[0])
-  })
-  console.log('recieved', data[0], ', sending relevant results back to the iphone-app')
+  console.log('resultingClassification', resultingClassification)
+  resultingClassification = data[0]
+  console.log('recieved', resultingClassification, ', waiting to send results back to the iphone-app')
+  // res.send('ok')
+  // io.on('connection', function(socket){
+  // });
+  // var io = req.app.get('socketio')
+  // io.emit('classification', data[0])
+  console.log(1)
+})
+
+router.get('/', function(req,res){
+  res.render('index.html')
+})
+
+router.get('/update', function (req, res) {
+  if (resultingClassification === ""){
+    res.send({"success": false, "data": null})
+  } else {
+    res.send({"success": true, "data": resultingClassification})
+  }
 
 })
 
