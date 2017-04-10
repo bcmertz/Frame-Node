@@ -14,10 +14,8 @@ var models = require('./models/models.js')
 var User = models.User;
 var querystring = require('querystring');
 
-// var Clarifai = require('clarifai');
 // var server = require('http').Server(app)
 // var io = require('socket.io')();
-
 
 var mongoose = require('mongoose')
 var resultingClassification = ""
@@ -27,12 +25,6 @@ var s3 = new aws.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 });
 
-
-// var clari = new Clarifai.App(
-//   process.env.idd,
-//   process.env.password
-// );
-// clari.getToken();
 
 var postToPython = function (data) {
   console.log('data', data)
@@ -50,27 +42,6 @@ var postToPython = function (data) {
       'Content-Length': Buffer.byteLength(postData)
     }
   };
-  // // var httpreq = http.request(options, function (response) {
-  // var req = http.request(options, function (res) {
-  //   res.setEncoding('utf8');
-  //   var result = '';
-  //   res.on('data', function (chunk) {
-  //     result += chunk;
-  //   });
-  //   res.on('end', function () {
-  //     console.log(result);
-  //   });
-  //   res.on('error', function (err) {
-  //     console.log(err);
-  //   })
-  // });
-  // // req error
-  // req.on('error', function (err) {
-  //   console.log(err);
-  // });
-  // //send request witht the postData form
-  // req.write(postData);
-  // req.end();
   request.post(options, function(e,r,body){
     if(e) {
       console.log(e);
@@ -89,18 +60,11 @@ router.post('/upload', function (req, res) {
   var targetPath = path.join(__dirname, './uploadedpics');
   console.log('req.files.photo:', req.files.photo);
   targetPath = targetPath + '/pic.jpg'
-  console.log('targetPath:', targetPath)
-  // tempPath.mv(targetPath, function(err) {
-  //   if (err) {
-  //     console.log('err:', err)
-  //     res.send(err);
-  //   }
-    console.log('image uploaded, saving to aws')
-    // var params = {Bucket: 'code-testing', Key: 'pics.jpg', Body: targetPath};
-    var params = {
-      Bucket: 'code-testing', Key: 'pics1.jpg', Body: req.files.photo.data, ACL:"public-read-write"
-    };
-    s3.putObject(params, function(err, data){
+  console.log('image uploaded, saving to aws')
+  var params = {
+    Bucket: 'code-testing', Key: 'pics1.jpg', Body: req.files.photo.data, ACL:"public-read-write"
+  };
+  s3.putObject(params, function(err, data){
     if (err) {
       console.log(err)
     } else {
@@ -108,8 +72,7 @@ router.post('/upload', function (req, res) {
       postToPython(url)
       res.send('sent to classifier, processing image');
     }
-    })
-  //})
+  })
 });
 
 router.post('/results', function (req, res) {
@@ -117,7 +80,6 @@ router.post('/results', function (req, res) {
   console.log('resultingClassification', resultingClassification)
   resultingClassification = data[0]
   console.log('recieved', resultingClassification, ', waiting to send results back to the iphone-app')
-  // res.send('ok')
   // io.on('connection', function(socket){
   // });
   // var io = req.app.get('socketio')
@@ -174,8 +136,6 @@ router.post('/register', function(req, res){
       })
     }
   })
-
-
 })
 
 router.post('/login', function(req, res){
