@@ -42,7 +42,7 @@ var postToPython = function (data) {
   });
   var options = {
     // url: 'https://aqueous-retreat-25940.herokuapp.com/classify',
-    url: 'http://sample-env.m359bd53gp.us-west-2.elasticbeanstalk.com',
+    url: 'http://sample-env.m359bd53gp.us-west-2.elasticbeanstalk.com/classify',
     // method: 'POST',
     form: postData,
     headers: {
