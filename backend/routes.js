@@ -78,7 +78,10 @@ router.post('/results', function (req, res) {
   var data = req.body.source
   var results = data[0]
   var username = req.body.user
-  resultingClassification.push({username : results})
+  resultingClassification.push({
+    results : results,
+    username : username
+  })
   console.log('recieved', resultingClassification, ', waiting to send results back to the iphone-app')
   // io.on('connection', function(socket){
   // });
