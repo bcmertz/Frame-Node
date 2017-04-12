@@ -91,7 +91,7 @@ router.post('/results', function (req, res) {
   // });
   // var io = req.app.get('socketio')
   // io.emit('classification', data[0])
-  res.send('got it')
+  res.send('got ittt')
 })
 
 router.get('/', function(req,res){
@@ -110,7 +110,8 @@ router.post('/update', function (req, res) {
       console.log("resultingClassificationBeginning", resultingClassification);
       resultingClassification.splice(item, 1);
       console.log("resultingClassificationEnding", resultingClassification);
-      res.send({success : true,
+      res.send({
+        success : true,
         result : result
       });
     } else {
