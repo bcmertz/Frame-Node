@@ -18,7 +18,7 @@ var querystring = require('querystring');
 // var io = require('socket.io')();
 
 var mongoose = require('mongoose')
-var resultingClassification = ""
+var resultingClassification = []
 
 var s3 = new aws.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -55,7 +55,6 @@ var postToPython = function (data) {
 };
 
 router.post('/upload', function (req, res) {
-  resultingClassification=""
   var tempPath = req.files.photo;
   var targetPath = path.join(__dirname, './uploadedpics');
   console.log('req.files.photo:', req.files.photo);
@@ -77,8 +76,9 @@ router.post('/upload', function (req, res) {
 
 router.post('/results', function (req, res) {
   var data = req.body.source
-  console.log('resultingClassification', resultingClassification)
-  resultingClassification = data[0]
+  var results = data[0]
+  var username = req.body.user
+  resultingClassification.push({username : results})
   console.log('recieved', resultingClassification, ', waiting to send results back to the iphone-app')
   // io.on('connection', function(socket){
   // });
@@ -92,7 +92,7 @@ router.get('/', function(req,res){
   res.render('index.html')
 })
 
-router.get('/update', function (req, res) {
+router.post('/update', function (req, res) {
   if (resultingClassification === ""){
     res.send({"success": false, "data": null})
   } else {
