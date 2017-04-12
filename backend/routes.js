@@ -26,11 +26,12 @@ var s3 = new aws.S3({
 });
 
 
-var postToPython = function (data) {
-  console.log('data', data)
+var postToPython = function (data, username) {
+  console.log('data', data, 'username', username)
 
   var postData = querystring.stringify({
-    "data" : data
+    "data" : data,
+    "username" : username
   });
   var options = {
     url: 'https://aqueous-retreat-25940.herokuapp.com/classify',
@@ -67,8 +68,9 @@ router.post('/upload', function (req, res) {
     if (err) {
       console.log(err)
     } else {
+      var username = 'bcmertz'
       var url = 'https://s3-us-west-1.amazonaws.com/'+'code-testing/'+'pics1.jpg' //can change out later for more robust filepaths
-      postToPython(url)
+      postToPython(url, username)
       res.send('sent to classifier, processing image');
     }
   })
@@ -104,7 +106,7 @@ router.post('/update', function (req, res) {
       console.log("resultingClassificationBeginning", resultingClassification);
       resultingClassification.splice(item, 1);
       console.log("resultingClassificationEnd", resultingClassification);
-      res.send({success : false,
+      res.send({success : true,
         results : results
       });
     }
