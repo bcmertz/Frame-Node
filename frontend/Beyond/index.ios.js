@@ -45,15 +45,16 @@ class Camera extends Component {
   }
   componentDidMount(){
     AsyncStorage.getItem('user')
-    .then((result)=> (
+    .then((result)=> {
       var parsedResult = JSON.parse(result);
+      console.log(parsedResult);
       var email = parsedResult.email;
       if(email.length){
         this.setState({
           email: email
         })
       }
-    ))
+    })
     .catch((err) => console.log(err))
   }
   componentDidUpdate(){
@@ -116,16 +117,17 @@ class Camera extends Component {
       .then((prom) => {
         console.log(prom);
         console.log('ready to set interval')
-        var startDate = Date.now();
+        var startDate =  new Date();
+        console.log(startDate);
         var update = setInterval(function(){
-          var currentDate = Date.now();
+          var currentDate = new Date();
+          console.log(currentDate);
           if(currentDate  - startDate > 30000){
             clearInterval();
             Alert.alert(
               'Classification failed'
             )
           }
-          var self = this;
           console.log('inside setinterval')
           fetch('https://stark-reef-72596.herokuapp.com/update', {
             method: 'POST',
