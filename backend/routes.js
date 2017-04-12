@@ -85,8 +85,8 @@ router.post('/results', function (req, res) {
     results : results,
     username : username
   })
-  console.log('REEESSUUULLLTTSSS','username',username)
-  console.log('recieved', resultingClassification, ', waiting to send results back to the iphone-app')
+  console.log('REEESSUUULLLTTSSS','username', username)
+  console.log('resultingClassification', resultingClassification)
   // io.on('connection', function(socket){
   // });
   // var io = req.app.get('socketio')
