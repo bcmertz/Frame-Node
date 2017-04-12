@@ -22,7 +22,6 @@ import {
 
 var xhr = new XMLHttpRequest();
 
-
 var options = {
   title: 'Take Photo',
   customButtons: [
@@ -39,12 +38,28 @@ class Camera extends Component {
   constructor(){
     super();
     this.state = {
-      response: ''
+      response: '',
+      gif: false,
+      email: ''
     }
     this.takePhoto = this.takePhoto.bind(this);
     this.chooseImage = this.chooseImage.bind(this);
     this.setImage = this.setImage.bind(this);
     this.logout = this.logout.bind(this);
+
+  }
+  componentDidMount(){
+    AsyncStorage.getItem('user')
+    .then((result)=> (
+      var parsedResult = JSON.parse(result);
+      var email = parsedResult.email;
+      if(email.length){
+        this.setState({
+          email: email
+        })
+      }
+    ))
+    .catch((err) => console.log(err))
   }
   componentDidUpdate(){
     if(this.state.response!==''){
@@ -87,9 +102,11 @@ class Camera extends Component {
         name: 'photo.jpg'
       };
       var body = new FormData();
-      body.append('authToken', 'secret')
       body.append('photo', photo);
-      body.append('title', 'A beautiful photo!');
+      this.setState({
+        gif: true,
+        response: ''
+      })
      fetch('https://stark-reef-72596.herokuapp.com/upload', {
         method: 'POST',
         headers:{
@@ -103,26 +120,18 @@ class Camera extends Component {
       })
       .then((prom) => {
         console.log(prom);
-        // socket.on('classification', function(data){
-        // clearInterval(update);
-        // console.log('inside promise');
-        // this.setState({
-        //   response: data
-        // })
-        // Alert.alert(
-        //   'Import Message',
-        //   data,
-        //   [
-        //     {text: 'Tell me more.'},
-        //     {text: 'Boring'}
-        //   ]
-        // )
-        // })
         console.log('ready to set interval')
         var update = setInterval(function(){
+          var self = this;
           console.log('inside setinterval')
-          // socket.emit('update', {hello: 'world'})
-          fetch('https://stark-reef-72596.herokuapp.com/update')
+          fetch('https://stark-reef-72596.herokuapp.com/update', {
+            method: 'POST',
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              email: self.state.email
+          })
           .then((response) => response.json())
           .then((responseJson) => {
             if (responseJson.success) {
@@ -130,7 +139,8 @@ class Camera extends Component {
               console.log('GOT RESULT!!!!', responseJson, responseJson.data);
               var result = responseJson.data
               self.setState({
-                response: result
+                response: result,
+                gif: false
               })
             } else {
               console.log("dont have results yet")
@@ -140,20 +150,6 @@ class Camera extends Component {
       .catch(err => {
         console.log(err);
       })
-
-    // var photo = {
-    //   uri: response.uri,
-    //   type:'image/jpeg',
-    //   name: 'photo.jpg'
-    // };
-    //
-    // var body = new FormData();
-    // body.append('authToken', 'secret');
-    // body.append('photo', photo);
-    // body.append('title', 'A beautiful photo!');
-    //
-    // xhr.open('POST', 'https://stark-reef-72596.herokuapp.com/upload');
-    // xhr.send(body);
     }
   }
   logout(evt){
@@ -172,9 +168,8 @@ class Camera extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <View style={{flex: .25, justifyContent: 'flex-end'}}>
+        <View style={{flex: .25, justifyContent: 'flex-start', marginTop: 33}}>
           <Text style={styles.textBig}>Explore Beyond</Text>
-          <Text>{this.state.response}</Text>
         </View>
         <View style={{flex: .5, justifyContent: 'center', alignItems: 'center'}}>
           <TouchableOpacity style={[styles.button, styles.buttonBlack]} onPress = {this.takePhoto}>
@@ -183,6 +178,12 @@ class Camera extends Component {
             <TouchableOpacity style={[styles.button, styles.buttonBlack]} onPress = {this.chooseImage}>
               <Text style={styles.buttonLabel}>Select from Gallery</Text>
               </TouchableOpacity>
+          {this.state.gif === true ?
+            <View style={{ alignItems: 'center'}}>
+            <Image style={{height:150, width:150, marginTop: 20}} source={{uri: 'https://media.giphy.com/media/xTk9ZvMnbIiIew7IpW/giphy.gif'}}/>
+            <Text style={{fontSize: 16}}>Loading Result...</Text>
+            </View>
+           : null}
       </View>
       <View style={{flex: .25, paddingBottom: 30, justifyContent: 'flex-end'}}>
         <TouchableOpacity onPress = {this.logout}>
