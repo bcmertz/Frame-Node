@@ -116,7 +116,15 @@ class Camera extends Component {
       .then((prom) => {
         console.log(prom);
         console.log('ready to set interval')
+        var startDate = Date.now();
         var update = setInterval(function(){
+          var currentDate = Date.now();
+          if(currentDate  - startDate > 30000){
+            clearInterval();
+            Alert.alert(
+              'Classification failed'
+            )
+          }
           var self = this;
           console.log('inside setinterval')
           fetch('https://stark-reef-72596.herokuapp.com/update', {
