@@ -57,6 +57,7 @@ var postToPython = function (data, username) {
 
 router.post('/upload', function (req, res) {
   var tempPath = req.files.photo;
+  var username = req.body.email;
   var targetPath = path.join(__dirname, './uploadedpics');
   console.log('req.files.photo:', req.files.photo);
   targetPath = targetPath + '/pic.jpg'
@@ -68,7 +69,6 @@ router.post('/upload', function (req, res) {
     if (err) {
       console.log(err)
     } else {
-      var username = 'bcmertz'
       var url = 'https://s3-us-west-1.amazonaws.com/'+'code-testing/'+'pics1.jpg' //can change out later for more robust filepaths
       postToPython(url, username)
       res.send('sent to classifier, processing image');
@@ -77,9 +77,9 @@ router.post('/upload', function (req, res) {
 });
 
 router.post('/results', function (req, res) {
-  var data = req.body.source
-  var results = data[0]
-  var username = req.body.username
+  var data = req.body.source;
+  var results = data[0];
+  var username = req.body.email;
   resultingClassification.push({
     results : results,
     username : username
