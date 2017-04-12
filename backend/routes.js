@@ -62,7 +62,7 @@ router.post('/upload', function (req, res) {
   console.log('UUOPPPPPLLLOOOAAADDDD','tempPath, username', tempPath, username)
   targetPath = targetPath + '/pic.jpg'
   console.log('image uploaded, saving to aws')
-  var key = str(username)+'.jpg'
+  var key = username+'.jpg'
   var params = {
     // Bucket: 'code-testing', Key: 'pics1.jpg', Body: req.files.photo.data, ACL:"public-read-write"
     Bucket: 'code-testing', Key: key, Body: req.files.photo.data, ACL:"public-read-write"
