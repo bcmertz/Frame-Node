@@ -14,13 +14,11 @@ var models = require('./models/models.js')
 var User = models.User;
 var querystring = require('querystring');
 
-// var Clarifai = require('clarifai');
 // var server = require('http').Server(app)
 // var io = require('socket.io')();
 
-
 var mongoose = require('mongoose')
-var resultingClassification = ""
+var resultingClassification = []
 
 var s3 = new aws.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -28,20 +26,16 @@ var s3 = new aws.S3({
 });
 
 
-// var clari = new Clarifai.App(
-//   process.env.idd,
-//   process.env.password
-// );
-// clari.getToken();
-
-var postToPython = function (data) {
-  console.log('data', data)
+var postToPython = function (data, username) {
+  console.log('data', data, 'username', username)
 
   var postData = querystring.stringify({
-    "data" : data
+    "data" : data,
+    "username" : username
   });
   var options = {
     url: 'https://aqueous-retreat-25940.herokuapp.com/classify',
+    // url: 'http://sample-env.m359bd53gp.us-west-2.elasticbeanstalk.com/classify',
     // method: 'POST',
     form: postData,
     headers: {
@@ -49,27 +43,6 @@ var postToPython = function (data) {
       'Content-Length': Buffer.byteLength(postData)
     }
   };
-  // // var httpreq = http.request(options, function (response) {
-  // var req = http.request(options, function (res) {
-  //   res.setEncoding('utf8');
-  //   var result = '';
-  //   res.on('data', function (chunk) {
-  //     result += chunk;
-  //   });
-  //   res.on('end', function () {
-  //     console.log(result);
-  //   });
-  //   res.on('error', function (err) {
-  //     console.log(err);
-  //   })
-  // });
-  // // req error
-  // req.on('error', function (err) {
-  //   console.log(err);
-  // });
-  // //send request witht the postData form
-  // req.write(postData);
-  // req.end();
   request.post(options, function(e,r,body){
     if(e) {
       console.log(e);
@@ -83,58 +56,73 @@ var postToPython = function (data) {
 };
 
 router.post('/upload', function (req, res) {
-  resultingClassification=""
   var tempPath = req.files.photo;
+  var username = req.body.email;
   var targetPath = path.join(__dirname, './uploadedpics');
-  console.log('req.files.photo:', req.files.photo);
+  console.log('UUOPPPPPLLLOOOAAADDDD','tempPath, username', tempPath, username)
   targetPath = targetPath + '/pic.jpg'
-  console.log('targetPath:', targetPath)
-  // tempPath.mv(targetPath, function(err) {
-  //   if (err) {
-  //     console.log('err:', err)
-  //     res.send(err);
-  //   }
-    console.log('image uploaded, saving to aws')
-    // var params = {Bucket: 'code-testing', Key: 'pics.jpg', Body: targetPath};
-    var params = {
-      Bucket: 'code-testing', Key: 'pics1.jpg', Body: req.files.photo.data, ACL:"public-read-write"
-    };
-    s3.putObject(params, function(err, data){
+  console.log('image uploaded, saving to aws')
+  var key = username+'.jpg'
+  var params = {
+    // Bucket: 'code-testing', Key: 'pics1.jpg', Body: req.files.photo.data, ACL:"public-read-write"
+    Bucket: 'code-testing', Key: key, Body: req.files.photo.data, ACL:"public-read-write"
+  };
+  s3.putObject(params, function(err, data){
     if (err) {
       console.log(err)
     } else {
-      var url = 'https://s3-us-west-1.amazonaws.com/'+'code-testing/'+'pics1.jpg' //can change out later for more robust filepaths
-      postToPython(url)
+      // var url = 'https://s3-us-west-1.amazonaws.com/'+'code-testing/'+'pics1.jpg' //can change out later for more robust filepaths
+      var url = 'https://s3-us-west-1.amazonaws.com/'+'code-testing/'+key //can change out later for more robust filepaths
+      postToPython(url, username)
       res.send('sent to classifier, processing image');
     }
-    })
-  //})
+  })
 });
 
 router.post('/results', function (req, res) {
-  var data = req.body.source
+  var data = req.body.source;
+  var results = data[0];
+  var username = req.body.username;
+  resultingClassification.push({
+    results : results,
+    username : username
+  })
+  console.log('REEESSUUULLLTTSSS','username', username)
   console.log('resultingClassification', resultingClassification)
-  resultingClassification = data[0]
-  console.log('recieved', resultingClassification, ', waiting to send results back to the iphone-app')
-  // res.send('ok')
   // io.on('connection', function(socket){
   // });
   // var io = req.app.get('socketio')
   // io.emit('classification', data[0])
-  console.log(1)
+  res.send('got ittt')
 })
 
 router.get('/', function(req,res){
   res.render('index.html')
 })
 
-router.get('/update', function (req, res) {
-  if (resultingClassification === ""){
-    res.send({"success": false, "data": null})
-  } else {
-    res.send({"success": true, "data": resultingClassification})
+router.post('/update', function (req, res) {
+  var username = req.body.email;
+  console.log('UUPPDAATTEE', req.body.email)
+  var numberItems = resultingClassification.length
+  var counter = 0
+  resultingClassification.forEach((item)=>{
+    if(item.username === username){
+      var result = item.results;
+      console.log('sending results', result)
+      console.log("resultingClassificationBeginning", resultingClassification);
+      resultingClassification.splice(item, 1);
+      console.log("resultingClassificationEnding", resultingClassification);
+      res.send({
+        success : true,
+        result : result
+      });
+    } else {
+      counter++
+    }
+  })
+  if (counter === numberItems) {
+    res.send({success:false})
   }
-
 })
 
 router.get('/', function(req,res){
@@ -172,8 +160,6 @@ router.post('/register', function(req, res){
       })
     }
   })
-
-
 })
 
 router.post('/login', function(req, res){
