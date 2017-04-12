@@ -104,13 +104,13 @@ router.post('/update', function (req, res) {
   console.log('UUPPDAATTEE', req.body.email)
   resultingClassification.forEach((item)=>{
     if(item.username === username){
-      var results = item.results;
+      var result = item.results;
       console.log('sending results', results)
       console.log("resultingClassificationBeginning", resultingClassification);
       resultingClassification.splice(item, 1);
       console.log("resultingClassificationEnd", resultingClassification);
       res.send({success : true,
-        results : results
+        result : result
       });
     }
   })
