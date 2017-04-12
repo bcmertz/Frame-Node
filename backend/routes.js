@@ -104,7 +104,7 @@ router.post('/update', function (req, res) {
   resultingClassification.forEach((item)=>{
     if(item.username === username){
       var result = item.results;
-      console.log('sending results', results)
+      console.log('sending results', result)
       console.log("resultingClassificationBeginning", resultingClassification);
       resultingClassification.splice(item, 1);
       console.log("resultingClassificationEnd", resultingClassification);
