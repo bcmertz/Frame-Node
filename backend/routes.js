@@ -59,7 +59,7 @@ router.post('/upload', function (req, res) {
   var tempPath = req.files.photo;
   var username = req.body.email;
   var targetPath = path.join(__dirname, './uploadedpics');
-  console.log('tempPath, username', tempPath, username)
+  console.log('UUOPPPPPLLLOOOAAADDDD','tempPath, username', tempPath, username)
   targetPath = targetPath + '/pic.jpg'
   console.log('image uploaded, saving to aws')
   var params = {
@@ -85,6 +85,7 @@ router.post('/results', function (req, res) {
     results : results,
     username : username
   })
+  console.log('REEESSUUULLLTTSSS','req.body.email',req.body.email)
   console.log('recieved', resultingClassification, ', waiting to send results back to the iphone-app')
   // io.on('connection', function(socket){
   // });
