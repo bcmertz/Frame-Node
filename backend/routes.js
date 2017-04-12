@@ -96,12 +96,20 @@ router.get('/', function(req,res){
 })
 
 router.post('/update', function (req, res) {
-  if (resultingClassification === ""){
-    res.send({"success": false, "data": null})
-  } else {
-    res.send({"success": true, "data": resultingClassification})
-  }
-
+  var username = req.body.email;
+  resultingClassification.forEach((item)=>{
+    if(item.username === username){
+      var results = item.results;
+      console.log('sending results', results)
+      console.log("resultingClassificationBeginning", resultingClassification);
+      resultingClassification.splice(item, 1);
+      console.log("resultingClassificationEnd", resultingClassification);
+      res.send({success : false,
+        results : results
+      });
+    }
+  })
+  res.send({success:false})
 })
 
 router.get('/', function(req,res){
