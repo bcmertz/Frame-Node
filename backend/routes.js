@@ -108,6 +108,8 @@ router.post('/update', function (req, res) {
       var result = item.results;
       console.log('sending results', result)
       console.log("resultingClassificationBeginning", resultingClassification);
+      resultingClassification.splice(item, 1);
+      console.log("resultingClassificationEnding", resultingClassification);
       res.send({success : true,
         result : result
       });
