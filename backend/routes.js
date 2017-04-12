@@ -101,6 +101,8 @@ router.get('/', function(req,res){
 router.post('/update', function (req, res) {
   var username = req.body.email;
   console.log('UUPPDAATTEE', req.body.email)
+  var numberItems = resultingClassification.length
+  var counter = 0
   resultingClassification.forEach((item)=>{
     if(item.username === username){
       var result = item.results;
@@ -109,9 +111,13 @@ router.post('/update', function (req, res) {
       res.send({success : true,
         result : result
       });
+    } else {
+      counter++
     }
   })
-  res.send({success:false})
+  if (counter === numberItems) {
+    res.send({success:false})
+  }
 })
 
 router.get('/', function(req,res){
