@@ -62,15 +62,17 @@ router.post('/upload', function (req, res) {
   console.log('UUOPPPPPLLLOOOAAADDDD','tempPath, username', tempPath, username)
   targetPath = targetPath + '/pic.jpg'
   console.log('image uploaded, saving to aws')
+  var key = str(username)+'.jpg'
   var params = {
-    Bucket: 'code-testing', Key: 'pics1.jpg', Body: req.files.photo.data, ACL:"public-read-write"
+    // Bucket: 'code-testing', Key: 'pics1.jpg', Body: req.files.photo.data, ACL:"public-read-write"
+    Bucket: 'code-testing', Key: key, Body: req.files.photo.data, ACL:"public-read-write"
   };
   s3.putObject(params, function(err, data){
     if (err) {
       console.log(err)
     } else {
-      var url = 'https://s3-us-west-1.amazonaws.com/'+'code-testing/'+'pics1.jpg' //can change out later for more robust filepaths
-      // var url = 'https://s3-us-west-1.amazonaws.com/'+'code-testing/'+str(username)+'.jpg' //can change out later for more robust filepaths
+      // var url = 'https://s3-us-west-1.amazonaws.com/'+'code-testing/'+'pics1.jpg' //can change out later for more robust filepaths
+      var url = 'https://s3-us-west-1.amazonaws.com/'+'code-testing/'+str(username)+'.jpg' //can change out later for more robust filepaths
       postToPython(url, username)
       res.send('sent to classifier, processing image');
     }
