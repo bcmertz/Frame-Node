@@ -59,7 +59,7 @@ router.post('/upload', function (req, res) {
   var tempPath = req.files.photo;
   var username = req.body.email;
   var targetPath = path.join(__dirname, './uploadedpics');
-  console.log('req.files.photo:', req.files.photo);
+  console.log('tempPath, username', tempPath, username)
   targetPath = targetPath + '/pic.jpg'
   console.log('image uploaded, saving to aws')
   var params = {
