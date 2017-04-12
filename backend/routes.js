@@ -79,7 +79,7 @@ router.post('/upload', function (req, res) {
 router.post('/results', function (req, res) {
   var data = req.body.source
   var results = data[0]
-  var username = req.body.user
+  var username = req.body.username
   resultingClassification.push({
     results : results,
     username : username
