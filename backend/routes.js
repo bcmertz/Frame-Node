@@ -80,7 +80,7 @@ router.post('/upload', function (req, res) {
 router.post('/results', function (req, res) {
   var data = req.body.source;
   var results = data[0];
-  var username = req.body.email;
+  var username = req.body.username;
   resultingClassification.push({
     results : results,
     username : username
@@ -101,6 +101,7 @@ router.get('/', function(req,res){
 
 router.post('/update', function (req, res) {
   var username = req.body.email;
+  console.log('UUPPDAATTEE', req.body.email)
   resultingClassification.forEach((item)=>{
     if(item.username === username){
       var results = item.results;
