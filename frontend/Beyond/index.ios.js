@@ -13,6 +13,8 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   TouchableOpacity,
+  Linking,
+  WebView,
   View
 } from 'react-native';
 
@@ -28,58 +30,60 @@ var options = {
   }
 };
 
+class WebViewThatOpensLinksInNavigator extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      uri: this.props.uri
+    }
+  }
+  render() {
+    const uri = this.props.uri;
+    return (
+      <WebView
+        ref={(ref) => { this.webview = ref; }}
+        source={{uri: uri}}
+      />
+    );
+  }
+}
+
 
 class Camera extends Component {
-  constructor(){
-    super();
+  constructor(props){
+    super(props);
     this.state = {
       response: '',
       gif: false,
-      email: ''
+      email: this.props.email,
+      photoUri: '',
     }
     this.takePhoto = this.takePhoto.bind(this);
     this.chooseImage = this.chooseImage.bind(this);
     this.setImage = this.setImage.bind(this);
     this.logout = this.logout.bind(this);
-
-  }
-  componentDidMount(){
-    AsyncStorage.getItem('user')
-    .then((result)=> (
-      var parsedResult = JSON.parse(result);
-      var email = parsedResult.email;
-      if(email.length){
-        this.setState({
-          email: email
-        })
-      }
-    ))
-    .catch((err) => console.log(err))
-  }
-  componentDidUpdate(){
-    if(this.state.response!==''){
-      Alert.alert(
-        'Import Message',
-        this.state.response,
-        [
-          {text: 'Tell me more.'},
-          {text: 'Boring'}
-        ]
-      )
-    }
+    this.learnMore = this.learnMore.bind(this);
   }
   takePhoto(evt){
     evt.preventDefault();
     console.log('inside takePhoto')
+    this.setState({
+      gif: false,
+      response: ''
+    })
     ImagePicker.launchCamera({noData: true}, this.setImage);
   }
   chooseImage(evt){
     evt.preventDefault();
     console.log('inside Choose Image')
+    this.setState({
+      gif: false,
+      response: ''
+    })
     ImagePicker.launchImageLibrary({noData: true}, this.setImage);
   }
   setImage(response){
-    var self = this
+    var self = this;
     console.log('Response = ', response);
     if (response.didCancel) {
       console.log('User cancelled image picker');
@@ -98,9 +102,11 @@ class Camera extends Component {
       };
       var body = new FormData();
       body.append('photo', photo);
+      body.append('email', self.state.email)
       this.setState({
         gif: true,
-        response: ''
+        response: '',
+        photoUri: response.uri
       })
      fetch('https://stark-reef-72596.herokuapp.com/upload', {
         method: 'POST',
@@ -109,15 +115,23 @@ class Camera extends Component {
         },
         body: body
       }).then((response) => {
-        console.log(response)
         console.log('image uploaded')
         return 'done';
       })
-      .then((prom) => {
-        console.log(prom);
-        console.log('ready to set interval')
-        var update = setInterval(function(){
-          var self = this;
+      .catch((err) => console.log(err))
+      console.log('ready to set interval')
+      var startDate =  new Date();
+      var update = setInterval(function(){
+        var currentDate = new Date();
+        if(currentDate  - startDate > 45000){
+          clearInterval(update);
+          self.setState({
+            gif: false
+          })
+            Alert.alert(
+              'Classification failed'
+            )
+          }
           console.log('inside setinterval')
           fetch('https://stark-reef-72596.herokuapp.com/update', {
             method: 'POST',
@@ -126,25 +140,32 @@ class Camera extends Component {
             },
             body: JSON.stringify({
               email: self.state.email
+            })
           })
           .then((response) => response.json())
           .then((responseJson) => {
             if (responseJson.success) {
               clearInterval(update);
-              console.log('GOT RESULT!!!!', responseJson, responseJson.data);
-              var result = responseJson.data
+              console.log('GOT RESULT!!!!', responseJson);
+              console.log('responseJson.result', responseJson.result)
+              var responseResult = responseJson.result;
+              var commaIndex = responseResult.indexOf(',');
+              if(commaIndex === -1){
+                commaIndex = responseResult.indexOf(' ');
+              }
+              var result = responseResult.slice(0, commaIndex);
               self.setState({
                 response: result,
                 gif: false
               })
             } else {
               console.log("dont have results yet")
-            }})
-          }, 1000)
-      })
-      .catch(err => {
-        console.log(err);
-      })
+            }
+          })
+        .catch(err => {
+          console.log(err);
+        })
+      }, 1000)
     }
   }
   logout(evt){
@@ -158,29 +179,55 @@ class Camera extends Component {
         self.props.navigator.pop();
       }
     })
-
+  }
+  learnMore(evt){
+    evt.preventDefault();
+    this.props.navigator.push({
+      component: WebViewThatOpensLinksInNavigator,
+      title: "Additional Information",
+      passProps: {uri: 'https://www.google.com/#q=' + encodeURI(this.state.response)},
+      leftButtonTitle: 'Cancel',
+      navigationBarHidden: false,
+      onLeftButtonPress: () => this.props.navigator.pop(),
+    })
   }
   render() {
     return (
       <View style={styles.container}>
-        <View style={{flex: .25, justifyContent: 'flex-start', marginTop: 33}}>
+        <View style={{flex: .15, justifyContent: 'flex-start', marginTop: 33}}>
           <Text style={styles.textBig}>Explore Beyond</Text>
         </View>
-        <View style={{flex: .5, justifyContent: 'center', alignItems: 'center'}}>
+        <View style={{flex: .65}}>
+        { this.state.response ===  '' && this.state.gif === false ?
+        <View style={{ alignItems: 'center', justifyContent: 'center'}}>
+          <Image style={{height: 250, width:250, marginTop: 10, marginBottom: 10}} source={{uri: 'https://media.giphy.com/media/l0HlRnAWXxn0MhKLK/giphy.gif'}}/>
+        </View>
+      : null}
+        {this.state.gif === true && this.state.response === '' ?
+          <View style={{ alignItems: 'center', justifyContent: 'center'}}>
+            <Image style={{height: 250, width:250, marginTop: 10, marginBottom: 10}} source={{uri: 'https://media.giphy.com/media/xTk9ZvMnbIiIew7IpW/giphy.gif'}}/>
+            <Text style={{fontSize: 16}}>Loading Result...</Text>
+          </View>
+         : null}
+         { this.state.response !==  '' && this.state.photoUri !== '' ?
+         <View style={{ alignItems: 'center', justifyContent: 'center'}}>
+           <Image style={{height: 250, width:250, marginTop: 10, marginBottom: 10}} source={{uri: this.state.photoUri}}/>
+           <Text syle={{fontSize: 16}}>{this.state.response}</Text>
+           <TouchableOpacity style={[styles.button, styles.buttonBlack, styles.buttonMarginTop]} onPress = {this.learnMore}>
+             <Text style={styles.buttonLabel}>Additional Information</Text>
+           </TouchableOpacity>
+         </View>
+       : null}
+        </View>
+        <View style={{flex: .15, justifyContent: 'flex-end', alignItems: 'center'}}>
           <TouchableOpacity style={[styles.button, styles.buttonBlack]} onPress = {this.takePhoto}>
             <Text style={styles.buttonLabel}>Take Photo</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, styles.buttonBlack]} onPress = {this.chooseImage}>
-              <Text style={styles.buttonLabel}>Select from Gallery</Text>
-              </TouchableOpacity>
-          {this.state.gif === true ?
-            <View style={{ alignItems: 'center'}}>
-            <Image style={{height:150, width:150, marginTop: 20}} source={{uri: 'https://media.giphy.com/media/xTk9ZvMnbIiIew7IpW/giphy.gif'}}/>
-            <Text style={{fontSize: 16}}>Loading Result...</Text>
-            </View>
-           : null}
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.button, styles.buttonBlack]} onPress = {this.chooseImage}>
+            <Text style={styles.buttonLabel}>Select from Gallery</Text>
+          </TouchableOpacity>
       </View>
-      <View style={{flex: .25, paddingBottom: 30, justifyContent: 'flex-end'}}>
+      <View style={{flex: .05, paddingBottom: 20, justifyContent: 'flex-end'}}>
         <TouchableOpacity onPress = {this.logout}>
           <Text style={{textDecorationLine: "underline"}}>Log Out</Text>
         </TouchableOpacity>
@@ -239,7 +286,8 @@ class Login extends Component {
           if (responseJson.success) {
             this.props.navigator.push({
               component: Camera,
-              title: "Camera"
+              title: "Camera",
+              passProps: {email: email}
             })
           } else {
             this.setState({
@@ -267,6 +315,7 @@ class Login extends Component {
     .then((response) => response.json())
     .then((responseJson) => {
       if (responseJson.success) {
+        var email = this.state.email.slice();
         AsyncStorage.setItem('user', JSON.stringify({
           email: this.state.email,
           password: this.state.password
@@ -279,10 +328,10 @@ class Login extends Component {
               password: '',
               errorMessage: ''
             })
-
             self.props.navigator.push({
               component: Camera,
-              title: "Camera"
+              title: "Camera",
+              passProps: {email: email}
             })
           }
         });
@@ -539,9 +588,12 @@ const styles = StyleSheet.create({
     color: 'white'
   },
   textBig: {
-    fontSize: 36,
+    fontSize: 54,
     textAlign: 'center',
     margin: 10
+  },
+  buttonMarginTop: {
+    marginTop: 10
   },
   loginTextInput: {
     height: 40,
