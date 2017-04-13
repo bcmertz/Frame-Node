@@ -38,17 +38,11 @@ class WebViewThatOpensLinksInNavigator extends Component {
     }
   }
   render() {
-    const uri = this.state.uri
+    const uri = this.props.uri;
     return (
       <WebView
         ref={(ref) => { this.webview = ref; }}
         source={{uri: uri}}
-        onNavigationStateChange={(event) => {
-          if (event.url !== uri) {
-            this.webview.stopLoading();
-            Linking.openURL(event.url);
-          }
-        }}
       />
     );
   }
@@ -191,8 +185,9 @@ class Camera extends Component {
     this.props.navigator.push({
       component: WebViewThatOpensLinksInNavigator,
       title: "Additional Information",
-      passProps: {uri: 'https://www.google.com/search/?=' + encodeURI(this.state.response)},
+      passProps: {uri: 'https://www.google.com/#q=' + encodeURI(this.state.response)},
       leftButtonTitle: 'Cancel',
+      navigationBarHidden: false,
       onLeftButtonPress: () => this.props.navigator.pop(),
     })
   }
@@ -205,20 +200,20 @@ class Camera extends Component {
         <View style={{flex: .65}}>
         { this.state.response ===  '' && this.state.gif === false ?
         <View style={{ alignItems: 'center', justifyContent: 'center'}}>
-          <Image style={{height: 250, width:250, marginTop: 20, marginBottom: 10}} source={{uri: 'https://media.giphy.com/media/l0HlRnAWXxn0MhKLK/giphy.gif'}}/>
+          <Image style={{height: 250, width:250, marginTop: 10, marginBottom: 10}} source={{uri: 'https://media.giphy.com/media/l0HlRnAWXxn0MhKLK/giphy.gif'}}/>
         </View>
       : null}
         {this.state.gif === true && this.state.response === '' ?
           <View style={{ alignItems: 'center', justifyContent: 'center'}}>
-            <Image style={{height: 250, width:250, marginTop: 20, marginBottom: 10}} source={{uri: 'https://media.giphy.com/media/xTk9ZvMnbIiIew7IpW/giphy.gif'}}/>
+            <Image style={{height: 250, width:250, marginTop: 10, marginBottom: 10}} source={{uri: 'https://media.giphy.com/media/xTk9ZvMnbIiIew7IpW/giphy.gif'}}/>
             <Text style={{fontSize: 16}}>Loading Result...</Text>
           </View>
          : null}
          { this.state.response !==  '' && this.state.photoUri !== '' ?
          <View style={{ alignItems: 'center', justifyContent: 'center'}}>
-           <Image style={{height: 250, width:250, marginTop: 20, marginBottom: 10}} source={{uri: this.state.photoUri}}/>
+           <Image style={{height: 250, width:250, marginTop: 10, marginBottom: 10}} source={{uri: this.state.photoUri}}/>
            <Text syle={{fontSize: 16}}>{this.state.response}</Text>
-           <TouchableOpacity style={[styles.button, styles.buttonBlack]} onPress = {this.learnMore}>
+           <TouchableOpacity style={[styles.button, styles.buttonBlack, styles.buttonMarginTop]} onPress = {this.learnMore}>
              <Text style={styles.buttonLabel}>Additional Information</Text>
            </TouchableOpacity>
          </View>
@@ -593,9 +588,12 @@ const styles = StyleSheet.create({
     color: 'white'
   },
   textBig: {
-    fontSize: 36,
+    fontSize: 54,
     textAlign: 'center',
     margin: 10
+  },
+  buttonMarginTop: {
+    marginTop: 10
   },
   loginTextInput: {
     height: 40,
