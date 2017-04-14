@@ -26,12 +26,13 @@ var s3 = new aws.S3({
 });
 
 
-var postToPython = function (data, username) {
-  console.log('data', data, 'username', username)
+var postToPython = function (data, username, uniqueId) {
+  console.log('data', data, 'username', username, "uniqueId", uniqueId)
 
   var postData = querystring.stringify({
     "data" : data,
-    "username" : username
+    "username" : username,
+    "uniqueId" : uniqueId
   });
   var options = {
     url: 'https://aqueous-retreat-25940.herokuapp.com/classify',
@@ -58,22 +59,21 @@ var postToPython = function (data, username) {
 router.post('/upload', function (req, res) {
   var tempPath = req.files.photo;
   var username = req.body.email;
+  var uniqueId = req.body.photoUri;
   var targetPath = path.join(__dirname, './uploadedpics');
-  console.log('UUOPPPPPLLLOOOAAADDDD','tempPath, username', tempPath, username)
+  console.log('in upload, username:', username)
   targetPath = targetPath + '/pic.jpg'
   console.log('image uploaded, saving to aws')
   var key = username+'.jpg'
   var params = {
-    // Bucket: 'code-testing', Key: 'pics1.jpg', Body: req.files.photo.data, ACL:"public-read-write"
     Bucket: 'code-testing', Key: key, Body: req.files.photo.data, ACL:"public-read-write"
   };
   s3.putObject(params, function(err, data){
     if (err) {
       console.log(err)
     } else {
-      // var url = 'https://s3-us-west-1.amazonaws.com/'+'code-testing/'+'pics1.jpg' //can change out later for more robust filepaths
       var url = 'https://s3-us-west-1.amazonaws.com/'+'code-testing/'+key //can change out later for more robust filepaths
-      postToPython(url, username)
+      postToPython(url, username, uniqueId)
       res.send('sent to classifier, processing image');
     }
   })
@@ -83,17 +83,19 @@ router.post('/results', function (req, res) {
   var data = req.body.source;
   var results = data[0];
   var username = req.body.username;
+  var uniqueId = req.body.uniqueId
   resultingClassification.push({
     results : results,
-    username : username
+    username : username,
+    uniqueId : uniqueId
   })
-  console.log('REEESSUUULLLTTSSS','username', username)
-  console.log('resultingClassification', resultingClassification)
+  console.log('In results, username:', username, 'uniqueId', uniqueId)
+  console.log('Classifications:', resultingClassification)
   // io.on('connection', function(socket){
   // });
   // var io = req.app.get('socketio')
   // io.emit('classification', data[0])
-  res.send('got ittt')
+  res.send('Got results')
 })
 
 router.get('/', function(req,res){
@@ -102,29 +104,32 @@ router.get('/', function(req,res){
 
 router.post('/update', function (req, res) {
   var username = req.body.email;
-  console.log('UUPPDAATTEE', req.body.email)
+  var uniqueId = req.body.photoUri
+  console.log('In update, username:', req.body.email, 'uniqueId:', uniqueId)
   var numberItems = resultingClassification.length
   var counter = 0
   var results = []
   resultingClassification.forEach((item)=>{
     if(item.username === username){
       var result = item.results;
-      results.push(result)
-      console.log('sending results', result)
-      console.log("resultingClassificationBeginning", resultingClassification);
+      if (item.uniqueId === uniqueId) {
+        results.push(result)
+        console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~found the asked for Classification~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', results[0])
+      }
+      console.log("Classifications, preparing to delete user classifications", resultingClassification);
       resultingClassification.splice(item, 1);
-      console.log("resultingClassificationEnding", resultingClassification);
+      console.log("Cleaned classifications", resultingClassification);
     } else {
       counter++
     }
   })
-  if (counter === numberItems) {
-    res.send({success:false})
-  } else {
+  if (results.length>0) {
     res.send({
       success : true,
-      result : results[results.length-1]
-    })    
+      result : results[0]
+    })
+  } else {
+    res.send({success:false})
   }
 })
 
