@@ -61,19 +61,17 @@ router.post('/upload', function (req, res) {
   var username = req.body.email;
   var uniqueId = req.body.photoUri;
   var targetPath = path.join(__dirname, './uploadedpics');
-  console.log('UUOPPPPPLLLOOOAAADDDD','tempPath, username', tempPath, username)
+  console.log('in upload, username:', username)
   targetPath = targetPath + '/pic.jpg'
   console.log('image uploaded, saving to aws')
   var key = username+'.jpg'
   var params = {
-    // Bucket: 'code-testing', Key: 'pics1.jpg', Body: req.files.photo.data, ACL:"public-read-write"
     Bucket: 'code-testing', Key: key, Body: req.files.photo.data, ACL:"public-read-write"
   };
   s3.putObject(params, function(err, data){
     if (err) {
       console.log(err)
     } else {
-      // var url = 'https://s3-us-west-1.amazonaws.com/'+'code-testing/'+'pics1.jpg' //can change out later for more robust filepaths
       var url = 'https://s3-us-west-1.amazonaws.com/'+'code-testing/'+key //can change out later for more robust filepaths
       postToPython(url, username, uniqueId)
       res.send('sent to classifier, processing image');
@@ -91,13 +89,13 @@ router.post('/results', function (req, res) {
     username : username,
     uniqueId : uniqueId
   })
-  console.log('REEESSUUULLLTTSSS','username', username, 'uniqueId', uniqueId)
-  console.log('resultingClassification', resultingClassification)
+  console.log('In results, username:', username, 'uniqueId', uniqueId)
+  console.log('Classifications:', resultingClassification)
   // io.on('connection', function(socket){
   // });
   // var io = req.app.get('socketio')
   // io.emit('classification', data[0])
-  res.send('got ittt')
+  res.send('Got results')
 })
 
 router.get('/', function(req,res){
@@ -107,7 +105,7 @@ router.get('/', function(req,res){
 router.post('/update', function (req, res) {
   var username = req.body.email;
   var uniqueId = req.body.photoUri
-  console.log('UUPPDAATTEE', req.body.email, 'req.body.photoUri')
+  console.log('In update, username:', req.body.email, 'uniqueId:', uniqueId)
   var numberItems = resultingClassification.length
   var counter = 0
   var results = []
@@ -115,13 +113,12 @@ router.post('/update', function (req, res) {
     if(item.username === username){
       var result = item.results;
       if (item.uniqueId === uniqueId) {
-        console.log('result', result)
         results.push(result)
         console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~found the asked for Classification~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', results[0])
       }
-      console.log("resultingClassificationBeginning", resultingClassification);
+      console.log("Classifications, preparing to delete user classifications", resultingClassification);
       resultingClassification.splice(item, 1);
-      console.log("resultingClassificationEnding", resultingClassification);
+      console.log("Cleaned classifications", resultingClassification);
     } else {
       counter++
     }
