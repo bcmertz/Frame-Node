@@ -115,8 +115,9 @@ router.post('/update', function (req, res) {
     if(item.username === username){
       var result = item.results;
       if (item.uniqueId === uniqueId) {
+        console.log('result', result)
         results.push(result)
-        console.log('found the asked for Classification')
+        console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~found the asked for Classification~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', results[0])
       }
       console.log("resultingClassificationBeginning", resultingClassification);
       resultingClassification.splice(item, 1);
