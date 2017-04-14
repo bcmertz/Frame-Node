@@ -26,12 +26,13 @@ var s3 = new aws.S3({
 });
 
 
-var postToPython = function (data, username) {
-  console.log('data', data, 'username', username)
+var postToPython = function (data, username, uniqueId) {
+  console.log('data', data, 'username', username, "uniqueId", uniqueId)
 
   var postData = querystring.stringify({
     "data" : data,
-    "username" : username
+    "username" : username,
+    "uniqueId" : uniqueId
   });
   var options = {
     url: 'https://aqueous-retreat-25940.herokuapp.com/classify',
@@ -58,6 +59,7 @@ var postToPython = function (data, username) {
 router.post('/upload', function (req, res) {
   var tempPath = req.files.photo;
   var username = req.body.email;
+  var uniqueId = req.body.photoUri;
   var targetPath = path.join(__dirname, './uploadedpics');
   console.log('UUOPPPPPLLLOOOAAADDDD','tempPath, username', tempPath, username)
   targetPath = targetPath + '/pic.jpg'
@@ -73,7 +75,7 @@ router.post('/upload', function (req, res) {
     } else {
       // var url = 'https://s3-us-west-1.amazonaws.com/'+'code-testing/'+'pics1.jpg' //can change out later for more robust filepaths
       var url = 'https://s3-us-west-1.amazonaws.com/'+'code-testing/'+key //can change out later for more robust filepaths
-      postToPython(url, username)
+      postToPython(url, username, uniqueId)
       res.send('sent to classifier, processing image');
     }
   })
@@ -83,11 +85,13 @@ router.post('/results', function (req, res) {
   var data = req.body.source;
   var results = data[0];
   var username = req.body.username;
+  var uniqueId = req.body.uniqueId
   resultingClassification.push({
     results : results,
-    username : username
+    username : username,
+    uniqueId : uniqueId
   })
-  console.log('REEESSUUULLLTTSSS','username', username)
+  console.log('REEESSUUULLLTTSSS','username', username, 'uniqueId', uniqueId)
   console.log('resultingClassification', resultingClassification)
   // io.on('connection', function(socket){
   // });
@@ -102,6 +106,7 @@ router.get('/', function(req,res){
 
 router.post('/update', function (req, res) {
   var username = req.body.email;
+  var uniqueId = req.body.uniqueId
   console.log('UUPPDAATTEE', req.body.email)
   var numberItems = resultingClassification.length
   var counter = 0
@@ -109,8 +114,10 @@ router.post('/update', function (req, res) {
   resultingClassification.forEach((item)=>{
     if(item.username === username){
       var result = item.results;
-      results.push(result)
-      console.log('sending results', result)
+      if (item.uniqueId === uniqueId) {
+        results.push(result)
+        console.log('found the asked for Classification')
+      }
       console.log("resultingClassificationBeginning", resultingClassification);
       resultingClassification.splice(item, 1);
       console.log("resultingClassificationEnding", resultingClassification);
@@ -123,8 +130,8 @@ router.post('/update', function (req, res) {
   } else {
     res.send({
       success : true,
-      result : results[results.length-1]
-    })    
+      result : results[0]
+    })
   }
 })
 
