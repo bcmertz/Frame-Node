@@ -126,13 +126,13 @@ router.post('/update', function (req, res) {
       counter++
     }
   })
-  if (counter === numberItems) {
-    res.send({success:false})
-  } else {
+  if (results.length>0) {
     res.send({
       success : true,
       result : results[0]
     })
+  } else {
+    res.send({success:false})
   }
 })
 
