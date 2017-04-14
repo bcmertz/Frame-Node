@@ -107,7 +107,7 @@ router.get('/', function(req,res){
 router.post('/update', function (req, res) {
   var username = req.body.email;
   var uniqueId = req.body.uniqueId
-  console.log('UUPPDAATTEE', req.body.email)
+  console.log('UUPPDAATTEE', req.body.email, 'req.body.photoUri', req.body.photoUri)
   var numberItems = resultingClassification.length
   var counter = 0
   var results = []
