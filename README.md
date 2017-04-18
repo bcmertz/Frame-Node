@@ -1,3 +1,3 @@
-# Frame
+# Frame Node
 
-Explore Beyond
+Node Server for the Frame project
